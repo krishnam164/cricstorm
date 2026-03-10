@@ -1,0 +1,270 @@
+<?php include 'header.php'; ?>
+
+<header class="relative py-24 px-6 text-center bg-gradient-to-b from-teal-50/50 to-primary overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-brand/5 rounded-full blur-3xl -z-10"></div>
+    
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-7xl font-extrabold text-slate900 mb-8 leading-[1.1]">
+            The Modern Way to <br><span class="text-brand">Auction Players.</span>
+        </h1>
+        <p class="text-slate-500 text-xl mb-12 max-w-2xl mx-auto font-medium">
+            CricStrome provides a seamless interface for cricket tournament organizers to manage live bidding and player stats with a professional touch.
+        </p>
+        <div class="flex flex-wrap justify-center gap-6">
+            <div class="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border border-teal-100 brand-glow">
+                <i class="fas fa-check-circle text-brand"></i>
+                <span class="text-sm font-bold text-slate-700">Real-time Bidding</span>
+            </div>
+            <div class="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border border-teal-100 brand-glow">
+                <i class="fas fa-check-circle text-brand"></i>
+                <span class="text-sm font-bold text-slate-700">Team Management</span>
+            </div>
+            <div class="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border border-teal-100 brand-glow">
+                <i class="fas fa-check-circle text-brand"></i>
+                <span class="text-sm font-bold text-slate-700">Auto-Calculation</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="relative rounded-[3rem] overflow-hidden bg-slate-900 h-[600px] flex items-center shadow-2xl group">
+        <img src="https://images.unsplash.com/photo-1531415074968-036ba1b565da?auto=format&fit=crop&q=80&w=2070" 
+            alt="Cricket Stadium" 
+            class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-[20s]">
+
+
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent"></div>
+
+        <div class="relative z-10 px-12 md:px-20 max-w-2xl">
+            <div class="inline-flex items-center space-x-2 bg-brand/20 border border-brand/30 px-3 py-1 rounded-full mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+                </span>
+                <span class="text-brand font-bold tracking-widest uppercase text-[10px]">Professional Grade</span>
+            </div>
+            
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+                Real-Time <br><span class="text-brand">Auction Control.</span>
+            </h2>
+            
+            <div class="flex flex-wrap gap-4 mt-8">
+                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl">
+                    <i class="fas fa-gavel text-brand"></i>
+                    <span class="text-white text-sm font-bold tracking-tight">Hammer Logic</span>
+                </div>
+                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl">
+                    <i class="fas fa-bolt text-brand"></i>
+                    <span class="text-white text-sm font-bold tracking-tight">Instant Sync</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-6 py-20 text-center">
+    <h2 class="flex items-center justify-center gap-4 text-3xl md:text-4xl font-black text-slate-900 mb-10">
+        <span class="text-2xl">🏏</span> What is CricStrome? <span class="text-2xl">🏏</span>
+    </h2>
+    <div class="space-y-6 text-slate-600 leading-relaxed text-lg">
+        <p>
+            CricStrome is an innovative online player auction platform designed specifically for cricket tournament organizers. It simplifies the entire player auction process, eliminating the need for cumbersome Excel sheets and manual tasks.
+        </p>
+        <p>
+            Our platform also enhances the experience for your sponsors by allowing you to showcase their advertisements directly on the auction screen, making your event more engaging and professional.
+        </p>
+    </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-6 py-20 bg-primary">
+    <div class="text-center mb-16">
+        <h2 class="flex items-center justify-center gap-3 text-3xl md:text-4xl font-black text-slate-900">
+            <span class="text-2xl">🏏</span> Advanced Features <span class="text-2xl">🏏</span>
+        </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-white p-10 rounded-2xl shadow-lg border border-slate-50 flex flex-col items-center text-center group transition-all">
+            <div class="w-20 h-20 bg-brand/10 text-brand rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:bg-brand group-hover:text-white transition-colors">
+                <i class="fab fa-youtube"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg">Live Streaming</h3>
+        </div>
+
+        <div class="bg-white p-10 rounded-2xl shadow-lg border border-slate-50 flex flex-col items-center text-center group transition-all">
+            <div class="w-20 h-20 bg-brand/10 text-brand rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:bg-brand group-hover:text-white transition-colors">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg">Team Owner View</h3>
+        </div>
+
+        <div class="bg-white p-10 rounded-2xl shadow-lg border border-slate-50 flex flex-col items-center text-center group transition-all">
+            <div class="w-20 h-20 bg-brand/10 text-brand rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:bg-brand group-hover:text-white transition-colors">
+                <i class="fas fa-gavel"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg">Remotely Bid</h3>
+        </div>
+
+        <div class="bg-white p-10 rounded-2xl shadow-lg border border-slate-50 flex flex-col items-center text-center group transition-all">
+            <div class="w-20 h-20 bg-brand/10 text-brand rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:bg-brand group-hover:text-white transition-colors">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg">Customer support</h3>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-6 py-24 bg-white rounded-[3rem] my-10 shadow-sm border border-teal-50">
+    <div class="text-center mb-20">
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
+            How To <span class="text-brand">Create Auction</span>
+        </h2>
+    </div>
+
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-16">
+        <div class="lg:w-1/2 relative group">
+            <div class="absolute inset-0 bg-brand/10 rounded-full blur-3xl opacity-50 transition-opacity"></div>
+            <img src="images/icon.png" 
+                 alt="App Mockup" 
+                 class="relative z-10 w-full max-w-md mx-auto drop-shadow-2xl transform -rotate-2 group-hover:rotate-0 transition-transform duration-500">
+        </div>
+
+        <div class="lg:w-1/2 space-y-10">
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">01</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">SIGN UP</h4>
+                    <p class="text-slate-500 text-sm mt-1">Sign in to the platform with OTP verification using your mobile number.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">02</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">CREATE AUCTION</h4>
+                    <p class="text-slate-500 text-sm mt-1">Provide basic details and upload your auction logo.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">03</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">ADD TEAMS</h4>
+                    <p class="text-slate-500 text-sm mt-1">Add teams and logos one by one via the management dashboard.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">04</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">ADD PLAYERS</h4>
+                    <p class="text-slate-500 text-sm mt-1">Share registration links or add players manually to the list.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">05</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">AUCTION DASHBOARD</h4>
+                    <p class="text-slate-500 text-sm mt-1">Manage your live auction and monitor bids in real-time.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">06</div>
+                <div>
+                    <h4 class="text-xl font-bold text-slate-900">SUMMARY SCREEN</h4>
+                    <p class="text-slate-500 text-sm mt-1">View final team rosters and auction statistics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+    <div class="flex items-center justify-between mb-12">
+        <h2 class="text-3xl font-extrabold text-slate900 border-l-8 border-brand pl-5">Active Tournaments</h2>
+        <span class="hidden md:block text-xs font-bold tracking-widest text-slate-400 uppercase">Live Marketplace</span>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <?php
+        $query = "SELECT * FROM tournament_master ORDER BY tournament_id DESC LIMIT 6";
+        $result = mysqli_query($conn, $query);
+
+        if(mysqli_num_rows($result) > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+                
+                // --- DYNAMIC TIME LOGIC ---
+                $current_time = time();
+                $t_date_raw = $row['tournament_date'] ?? $row['created_at'] ?? 'now';
+                $tournament_time = strtotime($t_date_raw); 
+                
+                if ($current_time < $tournament_time) {
+                    $status_label = "Upcoming"; $status_css = "bg-blue-500/90"; $dot_css = "bg-white";
+                } elseif ($current_time >= $tournament_time && $current_time <= ($tournament_time + 18000)) { 
+                    $status_label = "Live Now"; $status_css = "bg-brand/90"; $dot_css = "bg-white animate-pulse";
+                } else {
+                    $status_label = "Past Event"; $status_css = "bg-slate-400/90"; $dot_css = "bg-slate-200";
+                }
+
+                // --- LOGO PATH LOGIC ---
+                $db_logo = trim($row['tournament_logo'] ?? '');
+                $final_logo_path = empty($db_logo) ? "https://via.placeholder.com/600x400?text=No+Logo" : (strpos($db_logo, 'uploads/') !== false ? $db_logo : "uploads/tournaments/" . $db_logo);
+        ?>
+        
+        <div class="bg-surface rounded-[2rem] overflow-hidden border border-teal-50 hover:border-brand/30 transition-all duration-500 brand-glow group">
+            <div class="relative h-60 overflow-hidden bg-slate-100">
+                <img src="<?php echo $final_logo_path; ?>" 
+                     alt="<?php echo $row['tournament_name']; ?>"
+                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=Logo+Error'">
+                
+                <div class="absolute top-5 right-5 <?php echo $status_css; ?> backdrop-blur-md text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg flex items-center">
+                    <span class="inline-block w-2 h-2 <?php echo $dot_css; ?> rounded-full mr-2"></span>
+                    <?php echo $status_label; ?>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <h3 class="text-2xl font-bold text-slate900 group-hover:text-brand transition-colors mb-4 leading-tight">
+                    <?php echo $row['tournament_name']; ?>
+                </h3>
+                
+                <div class="space-y-3 mb-8">
+                    <div class="flex items-center text-slate-500 text-sm font-medium">
+                        <i class="far fa-calendar-alt w-6 text-brand"></i>
+                        <span>Date: <?php echo date('d M, Y', $tournament_time); ?></span>
+                    </div>
+                    <div class="flex items-center text-slate-500 text-sm font-medium">
+                        <i class="far fa-clock w-6 text-brand"></i>
+                        <span>Time: <?php echo date('h:i A', $tournament_time); ?></span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <?php if($status_label !== "Past Event"): ?>
+                        <a href="live_auction.php?tid=<?php echo $row['tournament_id']; ?>" 
+                           class="flex-grow flex items-center justify-center bg-slate900 text-white font-bold py-4 rounded-2xl hover:bg-brand transition-all duration-300 shadow-xl shadow-slate-200">
+                            ENTER AUCTION
+                        </a>
+                    <?php else: ?>
+                        <button class="flex-grow flex items-center justify-center bg-slate-100 text-slate-400 font-bold py-4 rounded-2xl cursor-not-allowed">
+                            AUCTION ENDED
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        
+        <?php 
+            }
+        } else {
+            echo "<p class='text-slate-400 font-bold text-lg text-center col-span-full'>No tournaments are currently live.</p>";
+        }
+        ?>
+    </div>
+</section>
+
+<style>
+    @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+</style>
+
+<?php include 'footer.php'; ?>
