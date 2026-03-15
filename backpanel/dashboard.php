@@ -2,12 +2,10 @@
 
 include '../config.php';
 
-/** * 1. MASTER SECURITY GATE */
-if (!isset($_SESSION['admin_id']) || $_SESSION['admin_id'] == '' || !isset($_SESSION['admin_mobile']) || $_SESSION['admin_mobile'] == ''  || !mysqli_num_rows(mysqli_query($conn, "SELECT user_id FROM user_master WHERE user_id = '{$_SESSION['admin_id']}' AND is_admin = 1")) > 0) {
-    header("Location: ../login.php"); 
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'administrator') {
+    header("Location: ../login.php");
     exit();
 }
-
 // 2. DATA AGGREGATION
 $total_players = mysqli_num_rows(mysqli_query($conn, "SELECT player_id FROM player_master"));
 $total_teams = mysqli_num_rows(mysqli_query($conn, "SELECT team_id FROM team_master"));

@@ -16,12 +16,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = mysqli_fetch_assoc($result);
         
         if (md5($password) == $user['user_pass']) {
-            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_role'] = strtolower($user['user_role']);
             $_SESSION['user_fullname'] = $user['user_fullname'];
 
             if ($_SESSION['user_role'] == 'administrator') {
-                header("Location: backpanel/dashboard.php");
+                header("Location: backpanel/index.php");
             } elseif ($_SESSION['user_role'] == 'manager') {
                 header("Location: manager/dashboard.php");
             } elseif ($_SESSION['user_role'] == 'organizer') {

@@ -103,11 +103,11 @@ include 'includes/header.php';
                         }
 
                         $logo = trim($row['tournament_logo'] ?? '');
-                        $logo_path = empty($logo) ? "https://via.placeholder.com/100" : (strpos($logo, 'uploads/') !== false ? "../".$logo : "../uploads/tournaments/".$logo);
+                        $logo_path = (strpos($logo, 'uploads/') !== false ? "../".$logo : "../uploads/tournaments/".$logo);
                 ?>
                 <tr class="hover:bg-teal-50/20 transition-colors">
                     <td class="px-8 py-6">
-                        <img src="<?php echo $logo_path; ?>" class="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-100" onerror="this.src='https://via.placeholder.com/100'">
+                        <img src="<?php echo $logo_path; ?>" class="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-100" onerror="this.onerror=null;this.src='../images/default_tournament.png';" alt="<?php echo $row['tournament_name']; ?>">
                     </td>
                     <td class="px-8 py-6">
                         <div class="text-sm font-bold text-slate-800"><?php echo $row['tournament_name']; ?></div>

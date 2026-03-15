@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'organizer') {
+    header("Location: ../login.php");
+    exit();
+}
+
 // Includes config.php, session gates, and the new separated sidebar/header
 include 'includes/header.php'; 
 

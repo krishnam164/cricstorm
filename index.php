@@ -1,7 +1,5 @@
 <?php include 'header.php'; ?>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
 <header class="relative py-24 px-6 text-center bg-gradient-to-b from-teal-50/50 to-primary overflow-hidden">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-brand/5 rounded-full blur-3xl -z-10 animate__animated animate__pulse animate__infinite"></div>
     
@@ -184,7 +182,7 @@
                 }
 
                 $db_logo = trim($row['tournament_logo'] ?? '');
-                $final_logo_path = empty($db_logo) ? "https://via.placeholder.com/600x400?text=No+Logo" : (strpos($db_logo, 'uploads/') !== false ? $db_logo : "uploads/tournaments/" . $db_logo);
+                $final_logo_path = (strpos($db_logo, 'uploads/') !== false ? $db_logo : "uploads/tournaments/" . $db_logo);
         ?>
         
         <div class="bg-surface rounded-[2rem] overflow-hidden border border-teal-50 hover:border-brand/30 transition-all duration-500 brand-glow group hover:-translate-y-2">
@@ -192,7 +190,7 @@
                 <img src="<?php echo $final_logo_path; ?>" 
                      alt="<?php echo $row['tournament_name']; ?>"
                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                     onerror="this.src='https://via.placeholder.com/600x400?text=Logo+Error'">
+                     onerror="this.onerror=null;this.src='images/default_tournament.png';">
                 
                 <div class="absolute top-5 right-5 <?php echo $status_css; ?> backdrop-blur-md text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg flex items-center">
                     <span class="inline-block w-2 h-2 <?php echo $dot_css; ?> rounded-full mr-2"></span>

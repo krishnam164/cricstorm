@@ -1,78 +1,140 @@
 <?php
 include 'config.php';
 
-// Check Maintenance Mode from Settings Master
-$set_res = mysqli_query($conn, "SELECT maintenance_mode FROM settings_master WHERE id = 1");
-$settings = mysqli_fetch_assoc($set_res);
-
-if (($settings['maintenance_mode'] ?? 'Off') == 'On') {
-    include 'maintenance_view.php'; // Show a "Coming Soon" screen if On
+/**
+ * 1. SESSION & ROLE GATE
+ * Ensures only Staff (Admin, Manager, Organizer) can access this page.
+ */
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+    header("Location: login.php?msg=session_expired");
     exit();
 }
+
+$session_user_id = mysqli_real_escape_string($conn, $_SESSION['user_id']);
+$user_role = strtolower($_SESSION['user_role']);
+$allowed_roles = ['administrator', 'manager', 'organizer', 'admin'];
+
+if (!in_array($user_role, $allowed_roles)) {
+    header("Location: login.php?msg=unauthorized");
+    exit();
+}
+
+/**
+ * 2. DATABASE QUERY LOGIC
+ * Corrected to use 'user_id' based on your database structure.
+ */
+if ($user_role == 'administrator' || $user_role == 'admin') {
+    // Admin View: Sees all auctions + names of the organizers
+    $query = "SELECT a.*, u.user_fullname 
+              FROM auction_master a 
+              LEFT JOIN users u ON a.user_id = u.user_id 
+              ORDER BY a.auction_id DESC";
+} else {
+    // Organizer/Manager View: Sees only auctions they created
+    $query = "SELECT a.* FROM auction_master a 
+              WHERE a.user_id = '$session_user_id' 
+              ORDER BY a.auction_id DESC";
+}
+
+$result = mysqli_query($conn, $query);
+
+// Safety Check: If query fails, don't crash, show a clean error.
+if (!$result) {
+    die("<div style='padding:40px; background:#fff1f2; color:#be123c; font-family:sans-serif; border-radius:20px; margin:50px; border:1px solid #fda4af;'>
+            <h2 style='margin-top:0;'>Database Error</h2>
+            <p>The query failed because: <b>" . mysqli_error($conn) . "</b></p>
+            <p>Please ensure the column <b>user_id</b> exists in both <i>auction_master</i> and <i>users</i> tables.</p>
+         </div>");
+}
+
+/**
+ * 3. DYNAMIC HEADER LOADING
+ */
+if ($user_role == 'organizer') {
+    include 'organizer/includes/header.php';
+} else {
+    include 'backpanel/includes/header.php';
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricStrome | Premier Auction Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFCF8; }
-        .hero-gradient { background: radial-gradient(circle at top right, #E2F2F0, transparent); }
-    </style>
-</head>
-<body class="hero-gradient min-h-screen">
 
-    <nav class="px-6 md:px-20 py-8 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white shadow-lg">
-                <i class="fas fa-bolt"></i>
-            </div>
-            <h1 class="text-xl font-black text-slate-900 italic">CricStrome</h1>
-        </div>
-        <div class="flex items-center gap-8">
-            <a href="live_auctions.php" class="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-teal-500 transition-all">Live Monitor</a>
-            <a href="login.php" class="bg-slate-900 text-white px-8 py-3 rounded-2xl text-xs font-bold hover:bg-teal-500 transition-all shadow-xl">Admin Login</a>
-        </div>
-    </nav>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div>
+        <h2 class="text-3xl font-black text-slate-900 italic tracking-tighter uppercase">
+            Auction <span class="text-orange-500">Inventory</span>
+        </h2>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] mt-1">
+            Global Management Feed • Role: <?php echo $user_role; ?>
+        </p>
+    </div>
+    
+    <?php if($user_role != 'manager'): // Managers usually just observe ?>
+    <a href="create_auction.php" class="bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 transition-all shadow-xl">
+        + Create Auction
+    </a>
+    <?php endif; ?>
+</div>
 
-    <section class="px-6 md:px-20 pt-20 pb-32 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        <div>
-            <span class="px-4 py-1.5 bg-teal-50 text-teal-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-100 mb-6 inline-block">
-                Platform Active
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <?php 
+    if (mysqli_num_rows($result) > 0):
+        while($auc = mysqli_fetch_assoc($result)): 
+            $status = $auc['auction_status'] ?? 'Draft';
+            $status_color = ($status == 'Live') ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-400';
+    ?>
+    <div class="bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-sm relative group overflow-hidden hover:shadow-md transition-all">
+        <div class="absolute top-8 right-8">
+            <span class="px-4 py-1.5 <?php echo $status_color; ?> rounded-full text-[9px] font-black uppercase tracking-widest">
+                <?php echo $status; ?>
             </span>
-            <h2 class="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] mb-8">
-                The Next Gen <br><span class="text-teal-500">Cricket Auction</span>
-            </h2>
-            <p class="text-slate-500 font-medium text-lg leading-relaxed mb-10 max-w-md">
-                Managing over 21,000 player records with real-time bidding precision.
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="live_auctions.php" class="bg-teal-500 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl shadow-teal-200 hover:scale-105 transition-all">
-                    Watch Live Bids
-                </a>
-            </div>
         </div>
 
-        <div class="relative">
-            <div class="absolute -inset-10 bg-teal-200/20 blur-[100px] rounded-full"></div>
-            <div class="relative bg-white p-12 rounded-[4rem] border border-teal-50 shadow-2xl">
-                <div class="grid grid-cols-2 gap-10">
-                    <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Total Teams</p>
-                        <p class="text-4xl font-black text-slate-900">66</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Players</p>
-                        <p class="text-4xl font-black text-teal-500">21k+</p>
-                    </div>
-                </div>
-            </div>
+        <div class="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-6">
+            <i class="fas fa-gavel text-xl"></i>
         </div>
-    </section>
 
-</body>
-</html>
+        <h3 class="text-xl font-black text-slate-900 mb-1 uppercase italic tracking-tight">
+            <?php echo $auc['auction_id']; ?>
+        </h3>
+        
+        <p class="text-[10px] text-slate-400 font-bold mb-8 uppercase tracking-wide">
+            <?php 
+                if(isset($auc['user_fullname'])) {
+                    echo "Organized by: <span class='text-slate-600'>" . $auc['user_fullname'] . "</span>";
+                } else {
+                    echo "Tournament Ref: #" . $auc['tournament_id'];
+                }
+            ?>
+        </p>
+
+        <div class="flex gap-2 pt-6 border-t border-slate-50">
+            <a href="auction_monitor.php?id=<?php echo $auc['auction_id']; ?>" 
+               class="flex-grow bg-slate-900 text-white text-center py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 transition-all">
+                Open Monitor
+            </a>
+            
+            <?php if($user_role == 'administrator' || $user_role == 'admin' || $user_role == 'organizer'): ?>
+            <a href="edit_auction.php?id=<?php echo $auc['auction_id']; ?>" 
+               class="w-12 h-12 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all border border-transparent hover:border-slate-200">
+                <i class="fas fa-cog text-xs"></i>
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php 
+        endwhile; 
+    else: 
+    ?>
+    <div class="col-span-full py-24 bg-white rounded-[4rem] border-2 border-dashed border-slate-100 text-center">
+        <div class="w-16 h-16 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-folder-open text-xl"></i>
+        </div>
+        <h3 class="text-lg font-black text-slate-900 mb-1">No Auctions Found</h3>
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest italic">Create a new auction to begin bidding</p>
+    </div>
+    <?php endif; ?>
+</div>
+
+<?php 
+// Standardized Footer
+include 'includes/footer.php'; 
+?>

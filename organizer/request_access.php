@@ -1,22 +1,38 @@
 <?php
 include '../config.php';
-if (!isset($_SESSION['user_id'])) { header("Location: ../login.php"); exit(); }
+
+if (!isset($_SESSION['user_id'])) { 
+    header("Location: ../login.php"); 
+    exit(); 
+}
 
 $user_id = $_SESSION['user_id'];
 
 // Handle Sending Request
 if (isset($_POST['send_request'])) {
-    mysqli_query($conn, "UPDATE users SET organizer_request = 'Pending' WHERE id = '$user_id'");
+
+    $res = mysqli_query($conn, "UPDATE users SET organizer_request = 'Pending' WHERE user_id = '$user_id'");
+
+    if(!$res){
+        die("Query Failed: " . mysqli_error($conn));
+    }
+
+    header("Location: request_access.php");
+    exit();
 }
 
 // Check current status
-$res = mysqli_query($conn, "SELECT organizer_request FROM users WHERE id = '$user_id'");
+$res = mysqli_query($conn, "SELECT organizer_request FROM users WHERE user_id = '$user_id'");
+
+if(!$res){
+    die("Query Failed: " . mysqli_error($conn));
+}
+
 $row = mysqli_fetch_assoc($res);
 $status = $row['organizer_request'] ?? 'None';
 
-include '../backpanel/includes/header.php';
+include 'includes/header.php';
 ?>
-
 <div class="max-w-xl mx-auto mt-20">
     <div class="bg-white p-12 rounded-[3rem] shadow-xl border border-orange-50 text-center">
         <?php if($status == 'Accepted'): ?>
