@@ -25,7 +25,6 @@ $admin_mobile = $_SESSION['admin_mobile'] ?? 'System Admin';
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f5f5f5; }
         .sidebar-item { transition: all 0.2s ease; }
         .sidebar-item:hover { background-color: rgba(20, 184, 166, 0.1); color: #14B8A6; }
-        .active-link { background-color: #14B8A6 !important; color: white !important; box-shadow: 0 10px 15px -3px rgba(20, 184, 166, 0.3); }
         
         /* Premium Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
