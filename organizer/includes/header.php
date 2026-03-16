@@ -19,7 +19,7 @@ $user_name = $_SESSION['user_fullname'] ?? 'Organizer';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f7f7f7; }
         .active-link { background: #fff7ed; color: #f97316 !important; border-radius: 1rem; }
     </style>
 </head>
@@ -28,7 +28,6 @@ $user_name = $_SESSION['user_fullname'] ?? 'Organizer';
         <div class="flex justify-between items-center mb-10">
             <h1 class="text-xs font-bold text-slate-400 uppercase tracking-widest">System Online</h1>
             <div class="flex items-center gap-3">
-                <span class="text-sm font-bold text-slate-700"><?php echo $user_name; ?></span>
-                <div class="w-10 h-10 bg-slate-900 rounded-xl"></div>
+                <span class="text-md font-bold text-slate-700"><?php echo $user_name; ?></span>
             </div>
         </div>

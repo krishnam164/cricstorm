@@ -24,6 +24,9 @@
         <a href="auction_monitor.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'auction_monitor.php' ? 'active-link' : 'text-slate-400') ?>">
             <i class="fas fa-gavel"></i> Global Auctions
         </a>
+          <a href="auction_controller.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'auction_controller.php' ? 'active-link' : 'text-slate-400') ?>">
+            <i class="fas fa-cogs"></i> auction controller
+        </a>
 
         <div class="pt-6 pb-2 px-6">
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Data Masters</p>
@@ -34,8 +37,9 @@
         <a href="player_directory.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'player_directory.php' ? 'active-link' : 'text-slate-400') ?>">
             <i class="fas fa-id-card"></i> Player Database
         </a>
-        <a href="team_directory.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'team_directory.php' ? 'active-link' : 'text-slate-400') ?>">
-            <i class="fas fa-users"></i> Team Master
+        
+         <a href="manage_teams.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'manage_teams.php' ? 'active-link' : 'text-slate-400') ?>">
+            <i class="fas fa-users"></i> Team Management
         </a>
 
         <a href="requests.php" class="sidebar-item <?php echo ($active_page == 'requests.php') ? 'active-link' : 'text-slate-400'; ?> flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-bold transition-all">

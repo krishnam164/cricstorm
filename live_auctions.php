@@ -20,7 +20,6 @@ $data = mysqli_fetch_assoc($res);
 
 /**
  * PHOTO LOGIC FIX
- * Ensure the path matches your XAMPP/WAMP folder structure.
  */
 $player_photo = !empty($data['photo']) ? 'uploads/players/' . $data['photo'] : 'uploads/players/default.png';
 
@@ -40,6 +39,9 @@ $available_count = $total_players - ($sold_count + $unsold_count);
 
 // 3. TEAMS LIST
 $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tournament_id = '$current_tournament_id' ORDER BY team_id ASC");
+
+// --- NEW FEATURE: DATA FOR TICKER ---
+$ticker_res = mysqli_query($conn, "SELECT p.name, a.points FROM auction_tracking a JOIN player_master p ON p.player_id = a.player_id WHERE a.is_sold = 1 AND a.tournament_id = '$current_tournament_id' ORDER BY a.auction_tracking_id DESC LIMIT 4");
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +74,15 @@ $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tourn
             border-radius: 2rem; box-shadow: 0 0 50px rgba(251, 191, 36, 0.3);
             animation: stampIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        /* Gavel Animation */
+        .gavel-icon { font-size: 8rem; color: #fbbf24; margin-bottom: 20px; animation: gavelStrike 0.5s ease infinite alternate; }
+        @keyframes gavelStrike { from { transform: rotate(0deg); } to { transform: rotate(-45deg); } }
+        
+        /* NEW FEATURE: Ticker Style */
+        .ticker-wrap { width: 100%; overflow: hidden; background: rgba(0,0,0,0.3); padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.1); }
+        .ticker { display: flex; animation: tickerScroll 20s linear infinite; white-space: nowrap; }
+        @keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
         @keyframes stampIn { from { transform: scale(5) rotate(0deg); opacity: 0; } to { transform: scale(1) rotate(-10deg); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -79,7 +90,9 @@ $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tourn
 <body class="p-8 h-screen flex flex-col justify-between">
 
     <?php if ($data['is_sold'] == 1): ?>
+        <audio autoplay><source src="https://www.myinstants.com/media/sounds/gavel-敲槌聲.mp3" type="audio/mpeg"></audio>
         <div class="sold-overlay">
+            <i class="fas fa-gavel gavel-icon"></i>
             <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full"></canvas>
             <div class="relative z-10 text-center">
                 <div class="sold-stamp">SOLD</div>
@@ -105,6 +118,7 @@ $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tourn
     <?php endif; ?>
 
     <?php if ($data['is_skip'] == 1): ?>
+        <audio autoplay><source src="https://www.myinstants.com/media/sounds/buzzer.mp3" type="audio/mpeg"></audio>
         <div class="fixed inset-0 bg-red-950/95 flex flex-col items-center justify-center z-[110] animate-pulse">
             <h1 class="text-[12rem] font-black text-white italic border-[20px] border-white p-12 uppercase transform -rotate-12 shadow-2xl">
                 Unsold
@@ -139,21 +153,10 @@ $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tourn
     <main class="flex items-center justify-between gap-10 relative z-10">
         <div class="w-1/4 relative">
             <div class="relative z-10 w-80 h-80 rounded-[3rem] overflow-hidden border-8 border-white/5 shadow-2xl bg-slate-800 flex items-center justify-center">
-                
-                <?php if(!empty($data['photo'])): ?>
-                    <img src="<?php echo $player_photo; ?>" 
-                         class="w-full h-full object-cover" 
-                         alt="Player Photo"
-                         onerror="this.src='https://via.placeholder.com/320?text=No+Image';">
-                <?php else: ?>
-                    <div class="text-slate-500 font-black text-center uppercase tracking-tighter">
-                        No<br>Photo
-                    </div>
-                <?php endif; ?>
-
+                <img src="<?php echo $player_photo; ?>" class="w-full h-full object-cover">
             </div>
             <div class="absolute -top-4 -left-4 bg-orange-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl z-20">
-                #<?php echo $data['player_no'] ?? '0'; ?>
+                <?php echo $data['player_no'] ?? '0'; ?>
             </div>
         </div>
 
@@ -210,6 +213,16 @@ $teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tourn
             </div>
         </div>
     </main>
+
+    <div class="ticker-wrap relative z-10">
+        <div class="ticker">
+            <?php while($row = mysqli_fetch_assoc($ticker_res)): ?>
+                <span class="mx-10 text-orange-400 font-bold uppercase">
+                    <i class="fas fa-check-circle mr-2"></i> <?php echo $row['name']; ?> SOLD @ ₹<?php echo number_format($row['points']); ?>
+                </span>
+            <?php endwhile; ?>
+        </div>
+    </div>
 
     <footer class="glass p-6 rounded-[2.5rem] flex items-center justify-between relative z-10">
         <div class="flex items-center gap-4 px-6 border-r border-white/10">

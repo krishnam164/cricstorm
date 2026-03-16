@@ -6,7 +6,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'organizer') {
     exit();
 }
 
-// Includes config.php, session gates, and the new separated sidebar/header
 include 'includes/header.php'; 
 
 // 1. FETCH METRICS FOR ORGANIZER
@@ -14,12 +13,12 @@ include 'includes/header.php';
 $t_res = mysqli_query($conn, "SELECT COUNT(tournament_id) as total FROM tournament_master WHERE user_id = '$user_id'");
 $t_count = ($t_res) ? mysqli_fetch_assoc($t_res)['total'] : 0;
 
-// Count total players in the 'users' table (your 21,000+ record database)
-$p_res = mysqli_query($conn, "SELECT COUNT(id) as total FROM users WHERE user_role = 'player'");
+// Count total players registered in the global system
+$p_res = mysqli_query($conn, "SELECT COUNT(player_id) as total FROM player_master");
 $p_count = ($p_res) ? mysqli_fetch_assoc($p_res)['total'] : 0;
 
-// Count global teams available
-$team_res = mysqli_query($conn, "SELECT COUNT(id) as total FROM team_master");
+// Count teams specifically linked to this organizer's latest tournament
+$team_res = mysqli_query($conn, "SELECT COUNT(team_id) as total FROM team_master");
 $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
 ?>
 
@@ -28,8 +27,15 @@ $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
         <h2 class="text-3xl font-black text-slate-900 italic tracking-tight uppercase">
             Organizer <span class="text-orange-500">Dashboard</span>
         </h2>
-        <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.3em] font-bold">Welcome back, <?php echo $user_name; ?></p>
+        <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.3em] font-bold">Session Active: <?php echo $user_name; ?></p>
     </div>
+    <a href="../live_broadcast.php" target="_blank" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:bg-orange-600 transition-all shadow-xl shadow-slate-200">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+        </span>
+        Live Broadcast
+    </a>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -55,12 +61,11 @@ $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
     </div>
 </div>
 
-
-
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
     <div class="lg:col-span-2 bg-white rounded-[3.5rem] border border-orange-50 shadow-sm overflow-hidden">
         <div class="p-10 border-b border-orange-50 flex justify-between items-center bg-orange-50/10">
             <h3 class="font-bold text-slate-800 italic uppercase text-xs tracking-widest">Recent Activity</h3>
+            <a href="manage_tournaments.php" class="text-[9px] font-black text-orange-500 uppercase tracking-widest hover:underline">View All</a>
         </div>
         <div class="p-2 overflow-x-auto">
             <table class="w-full text-left">
@@ -77,8 +82,8 @@ $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
                     if($recent_t && mysqli_num_rows($recent_t) > 0):
                         while($row = mysqli_fetch_assoc($recent_t)): 
                     ?>
-                    <tr class="hover:bg-orange-50/30 transition-all">
-                        <td class="px-8 py-6 font-bold text-slate-700 text-sm"><?php echo $row['tournament_name']; ?></td>
+                    <tr class="hover:bg-orange-50/30 transition-all group">
+                        <td class="px-8 py-6 font-bold text-slate-700 text-sm group-hover:text-orange-600 transition-colors"><?php echo $row['tournament_name']; ?></td>
                         <td class="px-8 py-6 text-xs text-slate-500"><?php echo date('d M, Y', strtotime($row['tournament_date'])); ?></td>
                         <td class="px-8 py-6 text-center">
                             <span class="px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">Active</span>
@@ -98,8 +103,9 @@ $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
         <div class="absolute top-0 right-0 p-4 opacity-10">
             <i class="fas fa-plus-circle text-9xl"></i>
         </div>
-        <i class="fas fa-plus-circle text-3xl mb-6 relative"></i>
+        <i class="fas fa-plus-circle text-3xl mb-6 relative border-2 border-white/20 w-16 h-16 flex items-center justify-center rounded-2xl"></i>
         <h4 class="text-xl font-black leading-tight mb-6 tracking-tighter italic relative">Launch New <br>Competition</h4>
+        <p class="text-[11px] text-orange-100 mb-8 font-medium leading-relaxed relative">Setup a new tournament, register teams, and start your live auction session.</p>
         <a href="add_tournament.php" class="relative inline-block bg-white text-orange-600 px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">
             Create League
         </a>
@@ -107,6 +113,5 @@ $team_count = ($team_res) ? mysqli_fetch_assoc($team_res)['total'] : 0;
 </div>
 
 <?php 
-// Closes the <main> tag and body
 include 'includes/footer.php'; 
 ?>

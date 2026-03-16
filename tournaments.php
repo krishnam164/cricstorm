@@ -32,7 +32,7 @@ include 'header.php';
             <button class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:text-brand hover:bg-white/50 transition-all">Upcoming</button>
         </div>
 
-        <a href="admin/login.php" class="w-full md:w-auto bg-brand text-white px-8 py-4 rounded-2xl font-black hover:bg-brandDark hover:scale-105 active:scale-95 transition-all shadow-lg shadow-brand/20 text-center">
+        <a href="login.php" class="w-full md:w-auto bg-brand text-white px-8 py-4 rounded-2xl font-black hover:bg-brandDark hover:scale-105 active:scale-95 transition-all shadow-lg shadow-brand/20 text-center">
             + CREATE NEW
         </a>
     </div>
