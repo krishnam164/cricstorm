@@ -6,7 +6,7 @@ $query = "
     SELECT 
         a.auction_tracking_id, a.player_id, a.points, a.is_sold, a.is_skip, a.sold_team, a.tournament_id,
         p.name, p.photo, p.batsman_type, p.address, p.player_id AS player_no,
-        t.name AS team_name, t.logo AS team_logo
+        t.name AS team_name, t.team_logo AS team_logo
     FROM auction_tracking a
     LEFT JOIN player_master p ON p.player_id = a.player_id
     LEFT JOIN team_master t ON t.team_id = a.sold_team
@@ -30,7 +30,7 @@ $total_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM player_master");
 $total_players = mysqli_fetch_assoc($total_res)['total'] ?? 0;
 
 // 3. TEAMS LIST
-$teams_res = mysqli_query($conn, "SELECT name, logo FROM team_master WHERE tournament_id = '$current_tournament_id' ORDER BY team_id ASC");
+$teams_res = mysqli_query($conn, "SELECT name, team_logo FROM team_master WHERE tournament_id = '$current_tournament_id' ORDER BY team_id ASC");
 
 // 4. TICKER DATA
 $ticker_res = mysqli_query($conn, "SELECT p.name, a.points FROM auction_tracking a JOIN player_master p ON p.player_id = a.player_id WHERE a.is_sold = 1 AND a.tournament_id = '$current_tournament_id' ORDER BY a.auction_tracking_id DESC LIMIT 5");
@@ -254,7 +254,7 @@ $ticker_res = mysqli_query($conn, "SELECT p.name, a.points FROM auction_tracking
     <div class="mt-auto">
         <div class="bg-white/5 py-4 flex justify-center gap-12 border-t border-white/10">
             <?php while($team = mysqli_fetch_assoc($teams_res)): ?>
-                <img src="uploads/teams/<?php echo $team['logo']; ?>" class="h-10 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100 cursor-pointer" title="<?php echo $team['name']; ?>">
+                <img src="uploads/teams/<?php echo $team['team_logo']; ?>" class="h-10 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100 cursor-pointer" title="<?php echo $team['name']; ?>">
             <?php endwhile; ?>
         </div>
 
