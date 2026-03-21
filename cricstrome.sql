@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 21, 2026 at 09:23 AM
+-- Generation Time: Mar 21, 2026 at 07:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -21427,7 +21427,7 @@ CREATE TABLE `team_master` (
   `total_points` varchar(20) NOT NULL,
   `remaining_points` varchar(20) NOT NULL,
   `team_password` varchar(100) NOT NULL,
-  `logo` varchar(255) NOT NULL,
+  `team_logo` varchar(255) NOT NULL,
   `display_order` tinyint(4) NOT NULL,
   `team_register_datetime` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -21436,7 +21436,7 @@ CREATE TABLE `team_master` (
 -- Dumping data for table `team_master`
 --
 
-INSERT INTO `team_master` (`team_id`, `tournament_id`, `name`, `short_name`, `owner_name`, `mobile_no`, `status`, `total_points`, `remaining_points`, `team_password`, `logo`, `display_order`, `team_register_datetime`) VALUES
+INSERT INTO `team_master` (`team_id`, `tournament_id`, `name`, `short_name`, `owner_name`, `mobile_no`, `status`, `total_points`, `remaining_points`, `team_password`, `team_logo`, `display_order`, `team_register_datetime`) VALUES
 (5, 4, 'Ram Worriors', 'ram', 'Hardik Navdiya', '9999999999', 'Publish', '10000000', '', '', '', 0, '2024-04-07 05:13:10'),
 (6, 4, 'Radhe Rocks', 'radhe', 'Ajay Vaghani', '9999999999', 'Publish', '10000000', '', '', '', 0, '2024-04-07 05:13:10'),
 (7, 4, 'Ansh Worriors', 'ansh', 'Rahul Nakrani', '9999999999', 'Publish', '10000000', '', '', '', 0, '2024-04-07 05:13:10'),
@@ -21502,7 +21502,8 @@ INSERT INTO `team_master` (`team_id`, `tournament_id`, `name`, `short_name`, `ow
 (73, 15, 'SHIVTANDAV Xl', 'SHIVTANDAV Xl', 'JALPESH MANGUKIYA AND SANDIP JADVANI', '9979967686', 'Publish', '10100000', '', '', '4204b-whatsapp-image-2025-12-24-at-5.27.48-pm-1-.jpeg', 3, '2025-12-24 17:37:53'),
 (74, 15, 'RAM WORRIER', 'RAM WORRIER', 'HARDIK ROY AND HARKISHAN GABANI', '9714614393', 'Publish', '10100000', '', '', 'd17c1-whatsapp-image-2025-12-24-at-5.27.48-pm-2-.jpeg', 4, '2025-12-24 17:39:31'),
 (75, 15, 'EDUPATH CHALLENGERS', 'EDUPATH CHALLENGERS', 'HIREN DHAMELIYA AND RUCHIT BHINGARADIYA', '9662721819', 'Publish', '10100000', '', '', 'a137d-whatsapp-image-2025-12-24-at-5.27.48-pm-3-.jpeg', 5, '2025-12-24 17:42:06'),
-(76, 15, 'KHODIYAR WORRIER', 'KHODIYAR WORRIER', 'DHRUVIL SAVANI AND DEVIN LATHIYA', '8866726604', 'Publish', '10100000', '', '', '8f0d6-whatsapp-image-2025-12-24-at-5.27.47-pm.jpeg', 6, '2025-12-24 17:44:06');
+(76, 15, 'KHODIYAR WORRIER', 'KHODIYAR WORRIER', 'DHRUVIL SAVANI AND DEVIN LATHIYA', '8866726604', 'Publish', '10100000', '10000', '', '8f0d6-whatsapp-image-2025-12-24-at-5.27.47-pm.jpeg', 6, '2025-12-24 17:44:06'),
+(83, 16, 'Chennai Super Kings', 'csk', 'Mishra Krishna', '9737631021', 'Active', '100000', '100000', '', 'uploads/tournaments/Jaynagar_Premier_League/chennai_super_kings_logo_1774113092.png', 0, '2026-03-21 22:41:32');
 
 -- --------------------------------------------------------
 
@@ -21754,7 +21755,7 @@ ALTER TABLE `settings_master`
 -- AUTO_INCREMENT for table `team_master`
 --
 ALTER TABLE `team_master`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `tournament_master`
