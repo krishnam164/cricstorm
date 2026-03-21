@@ -8,7 +8,7 @@
             The Modern Way to <br><span class="text-brand">Auction Players.</span>
         </h1>
         <p class="text-slate-500 text-xl mb-12 max-w-2xl mx-auto font-medium animate__animated animate__fadeIn animate__delay-1s">
-            CricStrome provides a seamless interface for cricket tournament organizers to manage live bidding and player stats with a professional touch.
+            CricStorm provides a seamless interface for cricket tournament organizers to manage live bidding and player stats with a professional touch.
         </p>
         <div class="flex flex-wrap justify-center gap-6 animate__animated animate__fadeInUp animate__delay-1s">
             <div class="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border border-teal-100 brand-glow hover:scale-105 transition-transform cursor-default">
@@ -64,11 +64,11 @@
 
 <section class="max-w-4xl mx-auto px-6 py-20 text-center animate-on-scroll">
     <h2 class="flex items-center justify-center gap-4 text-3xl md:text-4xl font-black text-slate-900 mb-10">
-        <span class="text-2xl animate-bounce">🏏</span> What is CricStrome? <span class="text-2xl animate-bounce">🏏</span>
+        <span class="text-2xl animate-bounce">🏏</span> What is CricStorm? <span class="text-2xl animate-bounce">🏏</span>
     </h2>
     <div class="space-y-6 text-slate-600 leading-relaxed text-lg">
         <p class="hover:text-slate-900 transition-colors">
-            CricStrome is an innovative online player auction platform designed specifically for cricket tournament organizers. It simplifies the entire player auction process, eliminating the need for cumbersome Excel sheets and manual tasks.
+            CricStorm is an innovative online player auction platform designed specifically for cricket tournament organizers. It simplifies the entire player auction process, eliminating the need for cumbersome Excel sheets and manual tasks.
         </p>
         <p class="hover:text-slate-900 transition-colors">
             Our platform also enhances the experience for your sponsors by allowing you to showcase their advertisements directly on the auction screen, making your event more engaging and professional.
@@ -216,9 +216,9 @@
 
                 <div class="flex gap-3">
                     <?php if($status_label !== "Past Event"): ?>
-                        <a href="live_auction.php?tid=<?php echo $row['tournament_id']; ?>" 
+                        <a href="player_forms.php?tid=<?php echo $row['tournament_id']; ?>" 
                            class="flex-grow flex items-center justify-center bg-slate900 text-white font-bold py-4 rounded-2xl hover:bg-brand hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-slate-200">
-                            ENTER AUCTION
+                            PLAYER REGISTATION
                         </a>
                     <?php else: ?>
                         <button class="flex-grow flex items-center justify-center bg-slate-100 text-slate-400 font-bold py-4 rounded-2xl cursor-not-allowed">

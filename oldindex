@@ -274,3 +274,19 @@ PayU Money Test Payment
 =====================
 Merchant Key: K4cfY7
 Salt : Dr2DZtzxj6h59L15q1Pj5L91tCBBZAf7
+
+
+
+
+<section class="relative py-20 px-6 bg-gradient-to-b from-teal-50/50 to-primary overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 rounded-full blur-3xl -z-10 animate__animated animate__pulse animate__infinite animate__slow"></div>
+    
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-slate-900 mb-6 leading-tight animate__animated animate__fadeInDown">
+            Explore <span class="text-brand">Tournaments.</span>
+        </h1>
+        <p class="text-slate-500 text-lg md:text-xl font-medium max-w-2xl mx-auto animate__animated animate__fadeIn animate__delay-1s">
+            Real-time auction marketplace for local and professional cricket leagues.
+        </p>
+    </div>
+</section>

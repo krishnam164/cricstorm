@@ -41,7 +41,6 @@ $result = mysqli_query($conn, $query);
 $active_page = 'all_tournaments';
 include 'includes/header.php'; 
 ?>
-
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
     <div>
         <h2 class="text-2xl font-black text-slate-900 italic">Global <span class="text-teal-500">Tournament Monitor</span></h2>
@@ -49,6 +48,11 @@ include 'includes/header.php';
     </div>
     
     <div class="flex items-center gap-4">
+        <a href="add_tournament.php" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-500 transition-all flex items-center gap-2 shadow-lg shadow-slate-200">
+            <i class="fas fa-plus"></i>
+            Add Tournament
+        </a>
+
         <form method="GET" class="bg-white px-4 py-2 rounded-xl border border-teal-50 shadow-sm flex items-center gap-3">
             <input type="hidden" name="search" value="<?php echo $search; ?>">
             <span class="text-[10px] font-bold text-slate-400 uppercase">Jump</span>
@@ -115,7 +119,6 @@ include 'includes/header.php';
                     </td>
                     <td class="px-8 py-6">
                         <div class="text-xs font-bold text-slate-600"><?php echo date('d M, Y', $t_time); ?></div>
-                        <div class="text-[10px] text-slate-400 uppercase font-black tracking-tighter"><?php echo date('h:i A', $t_time); ?></div>
                     </td>
                     <td class="px-8 py-6">
                         <span class="px-4 py-1.5 <?php echo $css; ?> rounded-full text-[9px] font-black uppercase">
