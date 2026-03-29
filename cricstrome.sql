@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 21, 2026 at 07:12 PM
+-- Generation Time: Mar 29, 2026 at 12:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -19891,7 +19891,50 @@ INSERT INTO `auction_tracking` (`auction_tracking_id`, `player_id`, `points`, `i
 (24578, 1974, 1003500, 0, 1, 73, 15, 0, '2026-03-21 11:41:59'),
 (24579, 1974, 1003500, 1, 0, 73, 15, 0, '2026-03-21 11:42:24'),
 (24580, 1974, 1003500, 0, 0, 73, 15, 0, '2026-03-21 11:43:24'),
-(24581, 1975, 1000, 0, 0, 0, 16, 0, '2026-03-21 13:28:51');
+(24581, 1975, 1000, 0, 0, 0, 16, 0, '2026-03-21 13:28:51'),
+(24582, 1975, 1000, 0, 0, 0, 16, 0, '2026-03-22 10:38:55'),
+(24583, 1975, 1000, 0, 1, 0, 16, 0, '2026-03-22 11:00:26'),
+(24584, 1975, 1000, 1, 0, 0, 16, 0, '2026-03-22 11:00:35'),
+(24585, 1975, 1000, 0, 0, 0, 16, 0, '2026-03-22 11:00:50'),
+(24586, 1976, 1000, 0, 0, 0, 16, 0, '2026-03-29 11:14:00'),
+(24587, 1975, 1000, 0, 0, 0, 16, 0, '2026-03-29 11:16:41'),
+(24588, 1976, 1000, 0, 0, 0, 16, 0, '2026-03-29 11:16:54'),
+(24589, 1976, 1000, 0, 1, 0, 16, 0, '2026-03-29 12:29:09'),
+(24590, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:29:22'),
+(24591, 1976, 1000, 1, 0, 83, 16, 0, '2026-03-29 12:32:59'),
+(24592, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:34:09'),
+(24593, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:36:26'),
+(24594, 1976, 1000, 1, 0, 83, 16, 0, '2026-03-29 12:36:34'),
+(24595, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:36:59'),
+(24596, 1976, 1000, 1, 0, 83, 16, 0, '2026-03-29 12:43:19'),
+(24597, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:43:34'),
+(24598, 1976, 1000, 0, 1, 83, 16, 0, '2026-03-29 12:49:16'),
+(24599, 1976, 1000, 1, 0, 83, 16, 0, '2026-03-29 12:54:30'),
+(24600, 1976, 1000, 0, 0, 83, 16, 0, '2026-03-29 12:55:10'),
+(24601, 1975, 1000, 0, 0, 83, 16, 0, '2026-03-29 13:08:45'),
+(24602, 1976, 1000, 0, 0, 83, 16, 0, '2026-03-29 13:15:02'),
+(24603, 1976, 1200000, 0, 0, 83, 16, 0, '2026-03-29 13:15:19'),
+(24604, 1976, 1200000, 0, 1, 83, 16, 0, '2026-03-29 13:15:27'),
+(24605, 1976, 1200000, 0, 0, 83, 16, 0, '2026-03-29 13:15:37'),
+(24606, 1976, 1200000, 0, 1, 83, 16, 0, '2026-03-29 13:53:17'),
+(24607, 1976, 1200000, 0, 1, 83, 16, 0, '2026-03-29 14:09:12'),
+(24608, 1976, 1200000, 0, 0, 83, 16, 0, '2026-03-29 14:11:03'),
+(24609, 1976, 1200000, 0, 1, 83, 16, 0, '2026-03-29 14:11:05'),
+(24610, 1976, 1203, 0, 0, 83, 16, 0, '2026-03-29 14:11:16'),
+(24611, 1975, 1203, 0, 1, 83, 16, 0, '2026-03-29 14:11:29'),
+(24612, 1975, 1203, 0, 1, 83, 16, 0, '2026-03-29 14:11:36'),
+(24613, 1975, 1203, 0, 0, 83, 16, 0, '2026-03-29 14:11:40'),
+(24614, 1975, 1203, 0, 0, 83, 16, 0, '2026-03-29 14:12:23'),
+(24615, 1975, 1203, 0, 1, 83, 16, 0, '2026-03-29 14:12:24'),
+(24616, 1975, 10000, 0, 0, 83, 16, 0, '2026-03-29 14:16:13'),
+(24617, 1975, 10000, 0, 1, 83, 16, 0, '2026-03-29 14:16:14'),
+(24618, 1975, 10000, 0, 0, 83, 16, 0, '2026-03-29 14:21:07'),
+(24619, 1975, 16000, 0, 0, 83, 16, 0, '2026-03-29 15:12:17'),
+(24620, 1975, 16000, 1, 0, 83, 16, 0, '2026-03-29 15:12:21'),
+(24621, 1976, 16000, 0, 0, 84, 16, 0, '2026-03-29 15:12:32'),
+(24622, 1976, 26000, 0, 0, 85, 16, 0, '2026-03-29 15:12:38'),
+(24625, 1976, 34000, 0, 0, 85, 16, 0, '2026-03-29 15:15:33'),
+(24626, 1976, 34000, 0, 0, 83, 16, 0, '2026-03-29 15:33:33');
 
 -- --------------------------------------------------------
 
@@ -21379,7 +21422,8 @@ INSERT INTO `player_master` (`player_id`, `tournament_id`, `form_no`, `name`, `a
 (1972, 15, 102, 'Paras italiya', 'Hadhapur ', '9033343395', '1993-12-09', 32, NULL, 'All Rounder', '', NULL, 'Publish', 'paras-italiya-15-102-25122025-232909.jpeg', 'paras-italiya-15-102-25122025-2329091.jpeg', 'paras-italiya-15-102-25122025-2329092.jpeg', NULL, NULL, NULL, '2025-12-25 23:29:09'),
 (1973, 15, 50, 'Mishra Krishna ', 'Bardoli', '9737631021', '0000-00-00', 20, 'M', 'All rounder', 'right hand', NULL, 'Publish', 'images/Krishna1(1).jpg', NULL, NULL, NULL, NULL, NULL, '2026-03-15 11:30:32'),
 (1974, 15, 50, 'Mishra Krishna ', 'Bardoli', '9737631021', '0000-00-00', 20, 'M', 'All rounder', 'right hand', NULL, 'Publish', 'krishna.png', NULL, NULL, NULL, NULL, NULL, '2026-03-15 11:30:46'),
-(1975, 16, 0, 'Krishna Shaileshbhai Mishra', 'Jay Nagar\r\nHouse', '0973763102', '2006-04-16', NULL, 'M', 'All Rounder', 'Right Handed', 'Right Arm Fast', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_photo.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_back.png', NULL, NULL, NULL, '2026-03-21 13:26:57');
+(1975, 16, 0, 'Krishna Shaileshbhai Mishra', 'Jay Nagar\r\nHouse', '0973763102', '2006-04-16', NULL, 'M', 'All Rounder', 'Right Handed', 'Right Arm Fast', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/Krishna.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_back.png', NULL, NULL, NULL, '2026-03-21 13:26:57'),
+(1976, 16, 0, 'Dhruv Sen', 'Bardoli', '970954432', '2009-12-28', NULL, 'S', 'Batsman', 'Right Handed', 'None', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/dhruv.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_back.png', NULL, NULL, NULL, '2026-03-29 11:13:25');
 
 -- --------------------------------------------------------
 
@@ -21503,7 +21547,14 @@ INSERT INTO `team_master` (`team_id`, `tournament_id`, `name`, `short_name`, `ow
 (74, 15, 'RAM WORRIER', 'RAM WORRIER', 'HARDIK ROY AND HARKISHAN GABANI', '9714614393', 'Publish', '10100000', '', '', 'd17c1-whatsapp-image-2025-12-24-at-5.27.48-pm-2-.jpeg', 4, '2025-12-24 17:39:31'),
 (75, 15, 'EDUPATH CHALLENGERS', 'EDUPATH CHALLENGERS', 'HIREN DHAMELIYA AND RUCHIT BHINGARADIYA', '9662721819', 'Publish', '10100000', '', '', 'a137d-whatsapp-image-2025-12-24-at-5.27.48-pm-3-.jpeg', 5, '2025-12-24 17:42:06'),
 (76, 15, 'KHODIYAR WORRIER', 'KHODIYAR WORRIER', 'DHRUVIL SAVANI AND DEVIN LATHIYA', '8866726604', 'Publish', '10100000', '10000', '', '8f0d6-whatsapp-image-2025-12-24-at-5.27.47-pm.jpeg', 6, '2025-12-24 17:44:06'),
-(83, 16, 'Chennai Super Kings', 'csk', 'Mishra Krishna', '9737631021', 'Active', '100000', '100000', '', 'uploads/tournaments/Jaynagar_Premier_League/chennai_super_kings_logo_1774113092.png', 0, '2026-03-21 22:41:32');
+(83, 16, 'Chennai Super Kings', 'csk', 'Mishra Krishna', '9737631021', 'Active', '100000', '100000', '', 'uploads/tournaments/Jaynagar_Premier_League/chennai_super_kings_logo_1774113092.png', 0, '2026-03-21 22:41:32'),
+(84, 16, 'Royal Challengers Bangaluru', 'RCB', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/royal_challengers_bangaluru_logo_1774774253.png', 0, '2026-03-29 14:20:53'),
+(85, 16, 'Rajesthan Royal', 'RR', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/rajesthan_royal_logo_1774775951.png', 0, '2026-03-29 14:27:38'),
+(86, 16, 'Gujrat Titans', 'GT', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/gujrat_titans_logo_1774774943.png', 0, '2026-03-29 14:32:23'),
+(87, 16, 'Mumbai Indians', 'MI', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/mumbai_indians_logo_1774775057.png', 0, '2026-03-29 14:34:17'),
+(88, 16, 'Delhi Capitals', 'DC', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/delhi_capitals_logo_1774775150.png', 0, '2026-03-29 14:35:50'),
+(89, 16, 'Punjab Kings', 'PBKS', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/punjab_kings_logo_1774775392.png', 0, '2026-03-29 14:39:52'),
+(90, 16, 'Kolkata knight Riders', 'KKR', 'Mishra Krishna', '9737631021', 'Active', '1000000', '1000', '', 'uploads/tournaments/Jaynagar_Premier_League/kolkata_knight_riders_logo_1774775701.png', 0, '2026-03-29 14:42:39');
 
 -- --------------------------------------------------------
 
@@ -21725,7 +21776,7 @@ ALTER TABLE `auction_player_master`
 -- AUTO_INCREMENT for table `auction_tracking`
 --
 ALTER TABLE `auction_tracking`
-  MODIFY `auction_tracking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24582;
+  MODIFY `auction_tracking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24627;
 
 --
 -- AUTO_INCREMENT for table `field_type_master`
@@ -21743,7 +21794,7 @@ ALTER TABLE `player_form_fields`
 -- AUTO_INCREMENT for table `player_master`
 --
 ALTER TABLE `player_master`
-  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1976;
+  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1977;
 
 --
 -- AUTO_INCREMENT for table `settings_master`
@@ -21755,7 +21806,7 @@ ALTER TABLE `settings_master`
 -- AUTO_INCREMENT for table `team_master`
 --
 ALTER TABLE `team_master`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `tournament_master`
