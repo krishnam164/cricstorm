@@ -21,9 +21,6 @@
         <a href="all_tournaments.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'all_tournaments.php') ? 'active-link' : 'text-slate-400'; ?> ">
             <i class="fas fa-trophy"></i> Tournaments
         </a>
-        <a href="auction_monitor.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'auction_monitor.php' ? 'active-link' : 'text-slate-400') ?>">
-            <i class="fas fa-gavel"></i> Global Auctions
-        </a>
           <a href="auction_controller.php" class="sidebar-item flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all <?php echo ($active_page == 'auction_controller.php' ? 'active-link' : 'text-slate-400') ?>">
             <i class="fas fa-cogs"></i> auction controller
         </a>

@@ -5,11 +5,13 @@ include 'config.php';
 $query = "
     SELECT 
         a.auction_tracking_id, a.player_id, a.points, a.is_sold, a.is_skip, a.sold_team, a.tournament_id,
-        p.name, p.photo, p.batsman_type, p.address, p.player_id AS player_no,
-        t.name AS team_name, t.team_logo AS team_logo
+        p.name, p.photo, p.batsman_type,p.category, p.address, p.player_id AS player_no,
+        t.name AS team_name, t.team_logo AS team_logo,
+        tm.tournament_name
     FROM auction_tracking a
     LEFT JOIN player_master p ON p.player_id = a.player_id
     LEFT JOIN team_master t ON t.team_id = a.sold_team
+    LEFT JOIN tournament_master tm ON tm.tournament_id = a.tournament_id
     ORDER BY a.auction_tracking_id DESC
     LIMIT 1
 ";
@@ -17,23 +19,41 @@ $query = "
 $res = mysqli_query($conn, $query);
 $data = mysqli_fetch_assoc($res);
 
-$player_photo = (!empty($data['photo']) && file_exists('uploads/players/' . $data['photo']))
-    ? 'uploads/players/' . $data['photo']
-    : 'uploads/players/default.png';
+$tournament_folder = !empty($data['tournament_name']) ? $data['tournament_name'] : 'default';
+
+$photo_path = ($data['photo'] ?? 'default.png');
+
+if (!empty($data['photo']) && file_exists($photo_path)) {
+    $player_photo = $photo_path;
+} else {
+    $player_photo = 'uploads/tournaments/default.png'; 
+}
+
 $current_tournament_id = $data['tournament_id'] ?? 0;
 
 // 2. LIVE STATS
+// Count sold players for THIS tournament
 $sold_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM auction_tracking WHERE is_sold = 1 AND tournament_id = '$current_tournament_id'");
 $sold_count = mysqli_fetch_assoc($sold_res)['total'] ?? 0;
 
-$total_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM player_master");
+// NEW: Count total players assigned ONLY to THIS tournament
+$total_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM player_master WHERE tournament_id = '$current_tournament_id'");
 $total_players = mysqli_fetch_assoc($total_res)['total'] ?? 0;
 
 // 3. TEAMS LIST
 $teams_res = mysqli_query($conn, "SELECT name, team_logo FROM team_master WHERE tournament_id = '$current_tournament_id' ORDER BY team_id ASC");
 
-// 4. TICKER DATA
-$ticker_res = mysqli_query($conn, "SELECT p.name, a.points FROM auction_tracking a JOIN player_master p ON p.player_id = a.player_id WHERE a.is_sold = 1 AND a.tournament_id = '$current_tournament_id' ORDER BY a.auction_tracking_id DESC LIMIT 5");
+// 4. TICKER DATA - Fetching only the last 6 SOLD players
+$ticker_query = "
+    SELECT p.name, a.points 
+    FROM auction_tracking a 
+    JOIN player_master p ON p.player_id = a.player_id 
+    WHERE a.is_sold = 1 
+    AND a.tournament_id = '$current_tournament_id' 
+    ORDER BY a.auction_tracking_id DESC 
+    LIMIT 6
+";
+$ticker_res = mysqli_query($conn, $ticker_query);
 ?>
 
 <!DOCTYPE html>
@@ -41,238 +61,288 @@ $ticker_res = mysqli_query($conn, "SELECT p.name, a.points FROM auction_tracking
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="3"> 
-    <title>LIVE AUCTION | CRICSTORM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL AUCTION DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Bebas+Neue&display=swap');
         
-        :root {
-            --ipl-navy: #001C44;
-            --ipl-gold: #d4376b;
-            --ipl-blue: #00529B;
-        }
-
         body { 
-            font-family: 'Rajdhani', sans-serif; 
-            background: radial-gradient(circle at center, #002d62 0%, #000b1a 100%);
-            color: white; 
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
+            position: relative;
+            margin: 0;
         }
 
-        .ipl-gradient { background: linear-gradient(90deg, #001C44 0%, #00529B 100%); }
-        
-        /* Glassmorphism Player Card */
-        .player-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
+        .action-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            font-size: 40rem;
+            color: rgba(59, 130, 246, 0.03);
+            z-index: -1;
+            animation: rotateGear 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotateGear {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 5px solid var(--ipl-gold);
         }
 
-        /* Animated Ticker */
-        .ticker-container {
-            background: rgba(0, 0, 0, 0.8);
-            border-top: 2px solid var(--ipl-gold);
-            height: 50px;
-        }
+        .font-bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
 
         @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .ticker-move { animation: scroll 25s linear infinite; }
-
-        /* Sold Stamp Style */
-        .sold-banner {
-            background: linear-gradient(45deg, #facc15, #ca8a04);
-            transform: skewX(-15deg);
-            box-shadow: 0 0 40px rgba(250, 204, 21, 0.4);
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
-        .font-sync { font-family: 'Syncopate', sans-serif; }
+        .animate-scroll { display: flex; width: max-content; animation: scroll 30s linear infinite; }
 
-        /* Animation for the Sold Pop-up */
-            .scale-up-center {
-                animation: scale-up-center 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-            }
+                /* Sold Popup Entry Animation */
+        .sold-popup { 
+            animation: iplPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+        }
 
-            @keyframes scale-up-center {
-                0% { transform: scale(0.5); opacity: 0; }
-                100% { transform: scale(1); opacity: 1; }
-            }
+        @keyframes iplPop {
+            0% { transform: scale(0.8) translateY(50px); opacity: 0; filter: blur(10px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        }
 
-            /* Enhancing the banner shine */
-            .sold-banner {
-                background: linear-gradient(90deg, #FFD700, #FFF9C4, #FFD700);
-                background-size: 200% auto;
-                animation: shine 2s linear infinite;
-            }
-
-            @keyframes shine {
-                to { background-position: 200% center; }
-            }
+        /* Background pulse for Unsold */
+        .bg-slate-950\/98 {
+            background-image: radial-gradient(circle at center, #1e1e1e 0%, #000 100%);
+        }
+        
     </style>
-
 </head>
 <body class="flex flex-col">
 
-    <?php if ($data['is_sold'] == 1): ?>
-        <div id="status-overlay" class="fixed inset-0 z-[200] flex items-center justify-center bg-blue-900/90 backdrop-blur-md transition-opacity duration-1000">
-            <div class="text-center scale-up-center">
-                <div class="sold-banner px-24 py-8 mb-8 relative">
-                    <div class="absolute -inset-2 bg-yellow-400 blur-xl opacity-50 animate-pulse"></div>
-                    <h1 class="text-8xl font-black text-blue-900 skew-x-[15deg] font-sync uppercase relative">SOLD</h1>
-                </div>
-                <div class="space-y-4">
-                    <img src="uploads/teams/<?php echo $data['team_logo']; ?>" class="h-32 mx-auto drop-shadow-[0_0_30px_rgba(255,255,255,0.5)] mb-4">
-                    <h2 class="text-6xl font-bold text-white uppercase tracking-[0.2em] font-sync"><?php echo $data['team_name']; ?></h2>
-                    <div class="inline-block bg-white text-blue-900 px-8 py-2 rounded-full font-black text-4xl mt-4">
-                        ₹<?php echo number_format($data['points']); ?>
-                    </div>
-                </div>
+    <i class="fas fa-cog action-ring"></i>
+
+  <?php if ($data['is_sold'] == 1): ?>
+    <div id="overlay" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center overflow-hidden">
+        <div id="trigger-crackers" class="hidden"></div>
+
+        <div class="absolute w-[600px] h-[600px] bg-yellow-500/20 rounded-full blur-[120px] animate-pulse"></div>
+        
+        <div class="text-center sold-popup relative z-10">
+            <div class="mb-6 text-yellow-500 text-6xl animate-bounce">
+                <i class="fas fa-trophy"></i>
+            </div>
+            
+            <h3 class="text-blue-400 font-bold tracking-[0.3em] uppercase mb-2 animate-pulse">Congratulations</h3>
+            
+            <div class="relative inline-block bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 text-slate-950 px-20 py-6 mb-8 -rotate-1 shadow-[0_0_50px_rgba(234,179,8,0.4)] border-y-4 border-white/30">
+                <h1 class="text-9xl font-black font-bebas leading-none tracking-tighter">SOLD!</h1>
+            </div>
+
+            <div class="flex flex-col items-center gap-2">
+                <p class="text-slate-400 uppercase tracking-widest text-sm">New Addition to</p>
+                <h2 class="text-6xl font-bold uppercase text-white drop-shadow-lg">
+                    <?php echo $data['team_name']; ?>
+                </h2>
+                <div class="h-1 w-24 bg-yellow-500 my-4"></div>
+                <p class="text-8xl font-bebas text-yellow-400 drop-shadow-2xl">
+                    ₹<?php echo number_format($data['points']); ?>
+                </p>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-        <script>
-            // Massive Firework Confetti
-            var duration = 5 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 300 };
+    </div>
 
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        </script>
 
     <?php elseif ($data['is_skip'] == 1): ?>
-        <div id="status-overlay" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/95 backdrop-blur-lg">
-            <div class="text-center border-y-4 border-slate-700 py-12 w-full bg-slate-900/50">
-                <h1 class="text-9xl font-black text-slate-500 font-sync tracking-tighter opacity-50">UNSOLD</h1>
-                <p class="text-2xl text-slate-400 uppercase tracking-[1em] mt-4">Better luck next time!</p>
+        <div id="overlay" class="fixed inset-0 z-[100] bg-slate-950/98 flex items-center justify-center">
+            <div class="text-center sold-popup">
+                <div class="mb-6 text-slate-600 text-6xl">
+                    <i class="fas fa-gavel"></i>
+                </div>
+                <h1 class="text-9xl font-bebas text-white/20 tracking-tighter">UNSOLD</h1>
+                <div class="bg-white/5 h-[1px] w-full my-6"></div>
+                <p class="text-slate-400 text-2xl font-light tracking-[0.2em] uppercase">
+                    Better Luck <span class="text-red-500/80">Next Time</span>
+                </p>
+                <p class="text-slate-600 text-xs mt-4 tracking-widest uppercase">Returning to the acceleration pool</p>
             </div>
         </div>
     <?php endif; ?>
 
-    <script>
-        // Auto-hide overlay after 5 seconds to show the dashboard again
-        setTimeout(() => {
-            const overlay = document.getElementById('status-overlay');
-            if(overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.remove(), 1000);
-            }
-        }, 5000);
-    </script>
-    <nav class="w-full ipl-gradient border-b-2 border-red-400/50 p-4 flex justify-between items-center shadow-2xl">
-        <div class="flex items-center gap-6">
-            <div class="bg-white p- rounded">
-                <img src="images/favicon.png" class="w-12 h-12 object-contain">
-            </div>
-            <div class="flex flex-col">
-                <span class="text-white font-sync font-bold text-xl">CRIC<span class="text-red-400">STORM</span></span>
-            </div>
-            <div class="h-10 w-[2px] bg-white/20"></div>
-            <div class="flex flex-col">
-                <span class="text-xs font-bold tracking-[0.3em] text-red-500 uppercase">Live Player Auction</span>
-                <span class="text-xl font-bold uppercase tracking-widest"><?php echo date('Y'); ?> Season</span>
-            </div>
+    <header class="h-16 border-b border-white/5 bg-slate-900/50 px-6 flex justify-between items-center z-10">
+        <div class="flex items-center gap-4">
+            <img src="images/favicon.png" class="h-10 w-10">
+            <span class="font-bebas text-2xl tracking-widest">CRIC<span class="text-red-500">STORM</span></span>
         </div>
-        
-        <div class="flex gap-4">
-            <div class="text-right border-r border-white/20 pr-4">
-                <p class="text-xs text-slate-400  text-md uppercase italic">Sold Count</p>
-                <p class="text-2xl font-bold text-red-400"><?php echo $sold_count; ?> <span class="text-sm text-white">/ <?php echo $total_players; ?></span></p>
-            </div>
-            <div class="bg-red-600 px-4 py-1 flex items-center rounded animate-pulse">
-                <span class="font-bold text-sm uppercase italic">Live Broadcast</span>
-            </div>
+        <div class="flex gap-10 items-center">
+        <div class="text-right">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Progress</span>
+            <span class="text-xl font-bebas text-white"><?php echo $sold_count; ?> / <?php echo $total_players; ?> SOLD</span>
         </div>
-    </nav>
+        <div class="bg-red-600/20 text-red-500 px-3 py-1 rounded-md text-xs font-bold animate-pulse border border-red-500/30">LIVE</div>
+    </div>
+    </header>
 
-    <main class="flex-grow flex items-center px-12 gap-12">
-        <div class="w-1/3 relative">
-            <div class="relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-blue-600 rounded-[2rem] blur opacity-25"></div>
-                <div class="relative bg-slate-900 rounded-[2rem] overflow-hidden border-4 border-white/10">
-                    <img src="<?php echo $player_photo; ?>" class="w-full aspect-square object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
-                        <span class="bg-yellow-500 text-blue-900 font-bold px-3 py-1 rounded text-sm uppercase">Player ID: <?php echo $data['player_no']; ?></span>
-                    </div>
+    <main class="flex-grow flex p-6 gap-6 overflow-hidden z-10">
+        <div class="w-1/3 flex flex-col">
+            <div class="relative glass rounded-3xl overflow-hidden p-2 h-full">
+                <i class="fas fa-gear absolute -bottom-10 -right-10 text-white/5 text-[15rem] animate-spin" style="animation-duration: 10s;"></i>
+                <img src="<?php echo $player_photo; ?>" class="relative z-10 w-full h-full object-cover rounded-2xl">
+                <div class="absolute top-6 left-6 z-20 bg-blue-600 px-4 py-1 rounded-full border border-white/20 text-[10px] font-black uppercase tracking-widest">
+                    Player #<?php echo $data['player_no']; ?>
                 </div>
             </div>
         </div>
 
-        <div class="w-2/3 flex flex-col gap-6">
-            <div class="player-card p-10 rounded-2xl">
-                <h4 class="text-blue-400 font-bold uppercase tracking-[0.4em] text-sm mb-2">Currently Under the Hammer</h4>
-                <h1 class="text-8xl font-black uppercase italic tracking-tighter text-white drop-shadow-lg mb-4">
-                    <?php echo $data['name'] ?? 'WAITING...'; ?>
-                </h1>
-                
-                <div class="flex gap-10 mt-6 border-t border-white/10 pt-6">
+        <div class="flex-grow flex flex-col gap-6">
+            <div class="glass rounded-3xl p-8 relative overflow-hidden">
+                <span class="text-red-500 font-bold text-xs uppercase tracking-widest block mb-2">Under the Hammer</span>
+                <h1 class="text-7xl font-bebas text-white leading-tight mb-2"><?php echo $data['name'] ?? 'WAITING...'; ?></h1>
+                <div class="flex items-center gap-2 text-slate-400">
+                    <i class="fas fa-tag text-xs"></i>
+                    <span class="text-sm font-semibold uppercase tracking-tighter"><?php echo $data['category'] ?></span>
+                </div>
+            </div>
+                <div class="glass rounded-3xl p-8 flex justify-between items-center border-l-8 border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
                     <div>
-                        <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">Role</p>
-                        <p class="text-3xl font-bold text-blue-400 uppercase"><?php echo $data['batsman_type'] ?: 'All Rounder'; ?></p>
+                        <p class="text-slate-400 text-xs font-bold uppercase mb-2">Current Leader</p>
+                        <div class="flex items-center gap-4">
+                            <?php if (!empty($data['team_logo'])): ?>
+                                <img src="<?php echo $data['team_logo']; ?>" class="h-16 w-16 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                            <?php else: ?>
+                                <div class="h-16 w-16 rounded-full bg-slate-800 flex items-center justify-center border border-dashed border-slate-600">
+                                    <i class="fas fa-users text-slate-600"></i>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <p class="text-5xl font-bebas text-white italic tracking-wide">
+                                <?php echo $data['team_name'] ?: 'WAITING FOR BIDS'; ?>
+                            </p>
+                        </div>
                     </div>
-                    <div class="h-12 w-[1px] bg-white/10"></div>
-                    <div>
-                        <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">Base Price</p>
-                        <p class="text-3xl font-bold text-white">₹ 20,00,000</p>
-                    </div>
-                    <div class="h-12 w-[1px] bg-white/10"></div>
-                    <div>
-                        <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">Hometown</p>
-                        <p class="text-3xl font-bold text-white"><?php echo $data['address'] ?: 'India'; ?></p>
-                    </div>
+                <div class="text-right">
+                    <p class="text-yellow-500 text-xs font-bold uppercase mb-2">Current Offer</p>
+                    <p class="text-8xl font-bebas text-white leading-none">
+                        ₹<?php echo number_format($data['points']); ?>
+                    </p>
                 </div>
             </div>
 
-            <div class="flex gap-6">
-                <div class="flex-grow bg-blue-600/20 border border-blue-500/50 p-6 rounded-2xl flex justify-between items-center">
-                    <div>
-                        <p class="text-blue-400 text-xs font-bold uppercase tracking-widest">Leading Team</p>
-                        <p class="text-3xl font-black uppercase italic"><?php echo $data['team_name'] ?: 'No Bids Yet'; ?></p>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="glass rounded-3xl p-6 flex items-center gap-4">
+                    <div class="h-14 w-14 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                        <i class="fas fa-cricket-bat-ball text-xl"></i>
                     </div>
-                    <div class="text-right">
-                        <p class="text-blue-400 text-xs font-bold uppercase tracking-widest">Current Bid</p>
-                        <p class="text-5xl font-black text-md uppercase">₹<?php echo number_format($data['points']); ?></p>
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase font-bold">Player Role</p>
+                        <p class="text-3xl font-bebas text-white uppercase tracking-wider"><?php echo $data['batsman_type'] ?: 'Premium'; ?></p>
+                    </div>
+                </div>
+                <div class="glass rounded-3xl p-6 flex items-center gap-4">
+                    <div class="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+                        <i class="fas fa-location-dot text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase font-bold">Hometown</p>
+                        <p class="text-3xl font-bebas text-white uppercase tracking-wider"><?php echo $data['address'] ?: 'Global'; ?></p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="mt-auto">
-        <div class="bg-white/5 py-4 flex justify-center gap-12 border-t border-white/10">
-            <?php while($team = mysqli_fetch_assoc($teams_res)): ?>
-                <img src="uploads/teams/<?php echo $team['team_logo']; ?>" class="h-10 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100 cursor-pointer" title="<?php echo $team['name']; ?>">
+    <footer class="bg-slate-900 border-t border-white/10 z-50">
+        <div class="px-6 py-3 flex justify-center gap-8 border-b border-white/5 bg-slate-950/50">
+            <?php mysqli_data_seek($teams_res, 0); while($team = mysqli_fetch_assoc($teams_res)): ?>
+                <img src="<?php echo $team['team_logo']; ?>" class="h-10 w-10 object-contain opacity-80" title">
             <?php endwhile; ?>
         </div>
-
-        <div class="ticker-container flex items-center overflow-hidden">
-            <div class="bg-red-400 text-black font-bold px-6 h-full flex items-center z-10 skew-x-[-20deg] -ml-4">
-                <span class="skew-x-[20deg] font-sync text-sm">RECENTLY SOLD</span>
+        <div class="h-12 overflow-hidden flex items-center relative">
+            <div class="absolute left-0 top-0 h-full bg-blue-600 px-6 flex items-center z-10 font-bold text-xs uppercase skew-x-[-15deg] -ml-2 ">
+                <span class="skew-x-[15deg]">Recent Sales</span>
             </div>
-            <div class="ticker-move whitespace-nowrap flex items-center">
+           <div class="animate-scroll">
+        <?php if (mysqli_num_rows($ticker_res) > 0): ?>
+            <?php for($i=0; $i<2; $i++): ?>
                 <?php mysqli_data_seek($ticker_res, 0); while($row = mysqli_fetch_assoc($ticker_res)): ?>
-                    <span class="mx-8 font-bold text-lg text-white">
-                        <i class="fas fa-gavel text-yellow-500 mr-2"></i>
-                        <?php echo strtoupper($row['name']); ?> 
-                        <span class="text-#d4376b">@ ₹<?php echo number_format($row['points']); ?></span>
-                    </span>
+                    <div class="flex items-center gap-3 border-r border-white/5 px-6">
+                        <span class="text-slate-400 font-bold text-[11px] uppercase"><?php echo $row['name']; ?></span>
+                        <span class="text-yellow-500 font-bebas text-xl">₹<?php echo number_format($row['points']); ?></span>
+                    </div>
                 <?php endwhile; ?>
-            </div>
-        </div>
+            <?php endfor; ?>
+        <?php else: ?>
+            <div class="px-6 text-slate-500 text-xs uppercase italic">Awaiting first successful bid...</div>
+        <?php endif; ?>
     </div>
+        </div>
+    </footer>
 
+    <script>
+        setTimeout(() => {
+            const overlay = document.getElementById('overlay');
+            if(overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 1000);
+            }
+        }, 5000);
+    </script>
+    <script>
+    function fireCrackers() {
+        var duration = 5 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 45, spread: 70, ticks: 60, zIndex: 200, gravity: 1 };
+
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            var particleCount = 80 * (timeLeft / duration);
+            
+            // Firing from Left Bottom
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: 0, y: 0.9 } 
+            }));
+            
+            // Firing from Right Bottom
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: 1, y: 0.9 } 
+            }));
+        }, 350);
+    }
+
+    window.onload = function() {
+        // Check if the sold overlay is active
+        if (document.getElementById('trigger-crackers')) {
+            fireCrackers();
+        }
+
+        // Auto-remove overlay after 5 seconds
+        setTimeout(() => {
+            const overlay = document.getElementById('overlay');
+            if(overlay) {
+                overlay.style.transition = 'opacity 1s ease-out';
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 1000);
+            }
+        }, 5000);
+    };
+</script>
 </body>
 </html>

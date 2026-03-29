@@ -43,17 +43,22 @@ include 'header.php';
                 $t_date_raw = $row['tournament_date'];
                 $tournament_time = strtotime($t_date_raw); 
                 
-                // CATEGORY LOGIC FOR FILTERING
-                $category = "past";
+                // 1. DYNAMIC CATEGORY LOGIC
                 if ($current_time < $tournament_time) {
                     $category = "upcoming";
-                    $status_label = "Upcoming"; $status_css = "bg-blue-500/90"; $dot_css = "bg-white";
+                    $status_label = "Upcoming"; 
+                    $status_css = "bg-blue-500/90"; 
+                    $dot_css = "bg-white";
                 } elseif ($current_time >= $tournament_time && $current_time <= ($tournament_time + 18000)) { 
                     $category = "live";
-                    $status_label = "Live Now"; $status_css = "bg-brand/90"; $dot_css = "bg-white animate-pulse";
+                    $status_label = "Live Now"; 
+                    $status_css = "bg-brand/90"; 
+                    $dot_css = "bg-white animate-pulse";
                 } else {
                     $category = "past";
-                    $status_label = "Past Event"; $status_css = "bg-slate-400/90"; $dot_css = "bg-slate-200";
+                    $status_label = "Past Event"; 
+                    $status_css = "bg-slate-400/90"; 
+                    $dot_css = "bg-slate-200";
                 }
 
                 $db_logo = trim($row['tournament_logo'] ?? '');
@@ -73,9 +78,19 @@ include 'header.php';
             </div>
 
             <div class="p-8">
-                <h3 class="text-2xl font-bold text-slate900 group-hover:text-brand transition-colors mb-4"><?php echo $row['tournament_name']; ?></h3>
+                <h3 class="text-2xl font-bold text-slate-900 group-hover:text-brand transition-colors mb-4"><?php echo $row['tournament_name']; ?></h3>
+                
                 <div class="flex gap-3">
-                    <a href="player_forms.php?tid=<?php echo $row['tournament_id']; ?>" class="flex-grow flex items-center justify-center bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-brand transition-all">PLAYER REGISTRATION</a>
+                    <?php if($category !== "past"): ?>
+                        <a href="player_forms.php?tid=<?php echo $row['tournament_id']; ?>" 
+                           class="flex-grow flex items-center justify-center bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-brand transition-all">
+                           PLAYER REGISTRATION
+                        </a>
+                    <?php else: ?>
+                        <div class="flex-grow flex items-center justify-center bg-slate-100 text-slate-400 font-bold py-4 rounded-2xl border border-dashed border-slate-200 uppercase text-sm tracking-widest">
+                           Registration Closed
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

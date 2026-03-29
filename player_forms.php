@@ -17,6 +17,10 @@ if (isset($_POST['register_player'])) {
     $bowling_type = $_POST['bowler_type'];
     $tshirt = $_POST['tshirt_size'];
     $trouser = $_POST['trouser_size'];
+
+    $form_query = mysqli_query($conn, "SELECT MAX(form_no) as last_no FROM player_master WHERE tournament_id = '$t_id'");
+    $form_data = mysqli_fetch_assoc($form_query);
+    $next_form_no = ($form_data['last_no']) ? $form_data['last_no'] + 1 : 1;
     
     // Get Tournament Name for Folder Path
     $t_res = mysqli_query($conn, "SELECT tournament_name FROM tournament_master WHERE tournament_id = '$t_id'");

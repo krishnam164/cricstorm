@@ -89,8 +89,8 @@ include 'includes/header.php';
             </div>
 
             <div class="md:col-span-1">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Short Name (3 Letters)</label>
-                <input type="text" name="short_name" maxlength="3" required placeholder="CSK" class="w-full px-6 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none uppercase">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Short Name</label>
+                <input type="text" name="short_name" maxlength="5" required placeholder="CSK" class="w-full px-6 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none uppercase">
             </div>
 
             <div class="md:col-span-1">
