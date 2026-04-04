@@ -15,9 +15,9 @@
         <div>
             <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-[0.2em]">Quick Links</h4>
             <ul class="text-slate-500 text-sm space-y-3">
-                <li><a href="index.php/#working" class="hover:text-brand transition flex items-center group">
+                <li><a href="about_us.php" class="hover:text-brand transition flex items-center group">
                     <span class="w-0 group-hover:w-2 h-[2px] bg-brand mr-0 group-hover:mr-2 transition-all"></span>
-                    How it works
+                    About Us
                 </a></li>
                 <li><a href="pricing.php" class="hover:text-brand transition flex items-center group">
                     <span class="w-0 group-hover:w-2 h-[2px] bg-brand mr-0 group-hover:mr-2 transition-all"></span>

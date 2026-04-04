@@ -91,58 +91,92 @@ include 'includes/header.php';
                 </tr>
             </thead>
             <tbody class="divide-y divide-teal-50">
-                <?php
-                if($result && mysqli_num_rows($result) > 0) {
-                    while($row = mysqli_fetch_assoc($result)) {
-                        $t_time = strtotime($row['tournament_date'] ?? 'now');
-                        $current_time = time();
-                        
-                        // Dynamic Status Logic
-                        if ($current_time < $t_time) {
-                            $status = "Upcoming"; $css = "bg-blue-50 text-blue-500";
-                        } elseif ($current_time <= ($t_time + 18000)) {
-                            $status = "Live Now"; $css = "bg-teal-50 text-teal-600 animate-pulse";
-                        } else {
-                            $status = "Past Event"; $css = "bg-slate-100 text-slate-400";
-                        }
+    <?php
+    if($result && mysqli_num_rows($result) > 0) {
+        while($row = mysqli_fetch_assoc($result)) {
+            $t_id = $row['tournament_id'];
+            $t_time = strtotime($row['tournament_date'] ?? 'now');
+            $current_time = time();
+            
+            // --- NEW: FETCH PLAYER COUNTS FOR THIS TOURNAMENT ---
+            $count_query = mysqli_query($conn, "
+                SELECT 
+                    SUM(CASE WHEN is_sold = 1 THEN 1 ELSE 0 END) as sold,
+                    SUM(CASE WHEN is_skip = 1 AND is_sold = 0 THEN 1 ELSE 0 END) as unsold
+                FROM auction_tracking 
+                WHERE tournament_id = '$t_id'
+            ");
+            $counts = mysqli_fetch_assoc($count_query);
+            $sold_count = $counts['sold'] ?? 0;
+            $unsold_count = $counts['unsold'] ?? 0;
+            // ----------------------------------------------------
 
-                        $logo = trim($row['tournament_logo'] ?? '');
-                        $logo_path = (strpos($logo, 'uploads/') !== false ? "../".$logo : "../uploads/tournaments/".$logo);
-                ?>
-                <tr class="hover:bg-teal-50/20 transition-colors">
-                    <td class="px-8 py-6">
-                        <img src="<?php echo $logo_path; ?>" class="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-100" onerror="this.onerror=null;this.src='../images/default_tournament.png';" alt="<?php echo $row['tournament_name']; ?>">
-                    </td>
-                    <td class="px-8 py-6">
-                        <div class="text-sm font-bold text-slate-800"><?php echo $row['tournament_name']; ?></div>
-                        <div class="text-[10px] text-slate-400 font-medium">ID: #<?php echo $row['tournament_id']; ?></div>
-                    </td>
-                    <td class="px-8 py-6">
-                        <div class="text-xs font-bold text-slate-600"><?php echo date('d M, Y', $t_time); ?></div>
-                    </td>
-                    <td class="px-8 py-6">
-                        <span class="px-4 py-1.5 <?php echo $css; ?> rounded-full text-[9px] font-black uppercase">
-                            <?php echo $status; ?>
-                        </span>
-                    </td>
-                    <td class="px-8 py-6">
-                        <div class="flex justify-center gap-3">
-                            <a href="view_details.php?id=<?php echo $row['tournament_id']; ?>" class="w-8 h-8 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center hover:bg-teal-500 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-eye text-xs"></i>
-                            </a>
-                            <a href="?delete_id=<?php echo $row['tournament_id']; ?>" onclick="return confirm('Master Delete: Are you sure?')" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-trash-alt text-xs"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php 
-                    }
-                } else {
-                    echo "<tr><td colspan='5' class='p-20 text-center text-slate-400 font-bold uppercase tracking-widest'>No tournaments found matching '{$search}'</td></tr>";
-                }
-                ?>
-            </tbody>
+            // Dynamic Status Logic
+            if ($current_time < $t_time) {
+                $status = "Upcoming"; $css = "bg-blue-50 text-blue-500";
+            } elseif ($current_time <= ($t_time + 18000)) {
+                $status = "Live Now"; $css = "bg-teal-50 text-teal-600 animate-pulse";
+            } else {
+                $status = "Past Event"; $css = "bg-slate-100 text-slate-400";
+            }
+
+            $logo = trim($row['tournament_logo'] ?? '');
+            $logo_path = (strpos($logo, 'uploads/') !== false ? "../".$logo : "../uploads/tournaments/".$logo);
+    ?>
+    <tr class="hover:bg-teal-50/20 transition-colors">
+        <td class="px-8 py-6">
+            <img src="<?php echo $logo_path; ?>" class="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-100" onerror="this.onerror=null;this.src='../images/default_tournament.png';" alt="<?php echo $row['tournament_name']; ?>">
+        </td>
+        <td class="px-8 py-6">
+            <div class="text-sm font-bold text-slate-800"><?php echo $row['tournament_name']; ?></div>
+            <div class="text-[10px] text-slate-400 font-medium">ID: #<?php echo $t_id; ?></div>
+        </td>
+        <td class="px-8 py-6">
+            <div class="text-xs font-bold text-slate-600"><?php echo date('d M, Y', $t_time); ?></div>
+        </td>
+        <td class="px-8 py-6">
+            <div class="flex flex-col gap-2">
+                <!-- Main Status Badge -->
+                <span class="w-fit px-4 py-1.5 <?php echo $css; ?> rounded-full text-[9px] font-black uppercase">
+                    <?php echo $status; ?>
+                </span>
+                
+                <!-- NEW: Player Stats Mini Badges with Click Action -->
+                <div class="flex items-center gap-2">
+                    <!-- Clickable Sold Count -->
+                    <button onclick="viewPlayers(<?php echo $t_id; ?>, 1)" 
+                            class="flex items-center gap-1 text-[9px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100 hover:bg-teal-600 hover:text-white transition-all cursor-pointer">
+                        <i class="fas fa-check-circle text-[8px]"></i> 
+                        <?php echo $sold_count; ?> Sold
+                    </button>
+                    
+                    <!-- Clickable Unsold Count -->
+                    <button onclick="viewPlayers(<?php echo $t_id; ?>, 0)" 
+                            class="flex items-center gap-1 text-[9px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 hover:bg-red-500 hover:text-white transition-all cursor-pointer">
+                        <i class="fas fa-times-circle text-[8px]"></i> 
+                        <?php echo $unsold_count; ?> Unsold
+                    </button>
+                </div>
+            </div>
+        </td>
+        <td class="px-8 py-6">
+            <div class="flex justify-center gap-3">
+                <a href="view_details.php?id=<?php echo $row['tournament_id']; ?>" class="w-8 h-8 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center hover:bg-teal-500 hover:text-white transition-all shadow-sm">
+                    <i class="fas fa-eye text-xs"></i>
+                </a>
+                <a href="?delete_id=<?php echo $row['tournament_id']; ?>" onclick="return confirm('Master Delete: Are you sure?')" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </a>
+            </div>
+        </td>
+    </tr>
+    <?php 
+        }
+    } else {
+        echo "<tr><td colspan='5' class='p-20 text-center text-slate-400 font-bold uppercase tracking-widest'>No tournaments found matching '{$search}'</td></tr>";
+    }
+    ?>
+</tbody>
         </table>
     </div>
 </div>
@@ -168,5 +202,54 @@ include 'includes/header.php';
         <a href="?page=<?php echo $page+1 . $search_param; ?>" class="w-10 h-10 bg-white border border-teal-50 rounded-xl flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white transition-all shadow-sm"><i class="fas fa-chevron-right"></i></a>
     <?php endif; ?>
 </div>
+
+<!-- Players List Modal -->
+<div id="playerModal" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <h3 id="modalTitle" class="text-sm font-black text-slate-800 uppercase italic tracking-tighter">Player List</h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="modalContent" class="p-6 max-h-[60vh] overflow-y-auto">
+            <!-- Content will be loaded here via AJAX -->
+            <div class="flex justify-center p-10">
+                <i class="fas fa-circle-notch fa-spin text-teal-500 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewPlayers(tournamentId, status) {
+    const modal = document.getElementById('playerModal');
+    const content = document.getElementById('modalContent');
+    const title = document.getElementById('modalTitle');
+    
+    title.innerText = (status === 1) ? "Sold Players List" : "Unsold Players List";
+    modal.classList.remove('hidden');
+    
+    // Fetch players using AJAX
+    fetch(`get_auction_players.php?t_id=${tournamentId}&status=${status}`)
+        .then(response => response.text())
+        .then(data => {
+            content.innerHTML = data;
+        })
+        .catch(err => {
+            content.innerHTML = "<p class='text-center text-red-500 font-bold'>Error loading players.</p>";
+        });
+}
+
+function closeModal() {
+    document.getElementById('playerModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('playerModal');
+    if (event.target == modal) closeModal();
+}
+</script>
 
 <?php include 'includes/footer.php'; ?>

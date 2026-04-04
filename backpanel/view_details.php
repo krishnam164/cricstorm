@@ -25,6 +25,8 @@ $t = mysqli_fetch_assoc($result);
 if (!$t) {
     die("<div class='p-20 text-center font-black text-rose-500 uppercase'>Tournament Not Found</div>");
 }
+ $logo = trim($t['tournament_logo'] ?? '');
+     $logo_path = (strpos($logo, 'uploads/') !== false ? "../".$logo : "../uploads/tournaments/".$logo);
 
 $active_page = 'all_tournaments';
 include 'includes/header.php';
@@ -45,7 +47,7 @@ include 'includes/header.php';
     <div class="space-y-8">
         <div class="bg-white p-10 rounded-[4rem] border border-teal-50 shadow-sm text-center">
             <div class="w-32 h-32 bg-slate-50 rounded-[2.5rem] mx-auto mb-6 flex items-center justify-center border border-slate-100 shadow-inner overflow-hidden">
-                <img src="../uploads/tournaments/<?php echo $t['tournament_logo']; ?>" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/150'">
+                <img src="<?php echo $logo_path; ?>" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='../images/placeholder.png';">
             </div>
             <h3 class="text-2xl font-black text-slate-900 mb-1"><?php echo $t['tournament_name']; ?></h3>
             <p class="text-[9px] font-black text-teal-500 uppercase tracking-widest mb-10 italic"><?php echo $t['tournament_auction_title']; ?></p>

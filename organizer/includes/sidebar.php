@@ -53,6 +53,10 @@ if ($perm_res && mysqli_num_rows($perm_res) > 0) {
             <?php endif; ?>
         </a>
 
+         <a href="auction_controller_organizer.php" class="flex items-center gap-4 px-6 py-4 text-sm font-bold transition-all <?php echo ($current_page == 'auction_controller_organizer.php') ? 'active-link' : 'text-slate-400 hover:text-slate-600'; ?>">
+            <i class="fas fa-shield-alt"></i> Action Monitor
+        </a>
+
         <?php if($is_approved): ?>
         <a href="auction_controller.php" class="flex items-center gap-4 px-6 py-4 text-sm font-bold text-orange-500 hover:bg-orange-50 rounded-2xl transition-all">
             <i class="fas fa-gavel"></i> Live Auction Engine

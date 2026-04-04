@@ -8,36 +8,52 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] == 'player') {
 }
 
 $user_id = mysqli_real_escape_string($conn, $_SESSION['user_id']);
+$user_role = $_SESSION['user_role'] ?? 'manager'; // Assume manager if not set
 
-/** * 2. SEARCH & PAGINATION LOGIC */
+/** 2. SEARCH & PAGINATION LOGIC */
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 $limit = 10; 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Filter logic: Only show tournaments belonging to THIS organizer
-$where_clause = "WHERE user_id = '$user_id'";
-if ($search) {
-    $where_clause .= " AND (tournament_name LIKE '%$search%' OR tournament_id LIKE '%$search%')";
+/** 
+ * NEW FILTER LOGIC:
+ * If user is Admin -> Show all
+ * If user is Manager/Organizer -> Only show if their ID is in auction_master
+ */
+if ($user_role == 'admin') {
+    $where_clause = "WHERE 1=1"; 
+} else {
+    // Only show tournaments assigned to this specific manager in auction_master
+    $where_clause = "WHERE am.user_id = '$user_id'";
 }
 
-// Get total count for pagination
-$total_query = mysqli_query($conn, "SELECT COUNT(tournament_id) as total FROM tournament_master $where_clause");
-$total_records = mysqli_fetch_assoc($total_query)['total'];
+if ($search) {
+    $where_clause .= " AND (tm.tournament_name LIKE '%$search%' OR tm.tournament_id LIKE '%$search%')";
+}
+
+// Get total count using a JOIN to respect assignments
+$total_query_sql = "SELECT COUNT(DISTINCT tm.tournament_id) as total 
+                    FROM tournament_master tm
+                    JOIN auction_master am ON tm.tournament_id = am.tournament_id 
+                    $where_clause";
+$total_res = mysqli_query($conn, $total_query_sql);
+$total_records = mysqli_fetch_assoc($total_res)['total'] ?? 0;
 $total_pages = ceil($total_records / $limit);
 
-// Fetch results
-$query = "SELECT * FROM tournament_master $where_clause ORDER BY tournament_id DESC LIMIT $offset, $limit";
+// Fetch results with JOIN
+$query = "SELECT tm.*, am.auction_id 
+          FROM tournament_master tm
+          JOIN auction_master am ON tm.tournament_id = am.tournament_id 
+          $where_clause 
+          GROUP BY tm.tournament_id
+          ORDER BY tm.tournament_id DESC 
+          LIMIT $offset, $limit";
+          
 $result = mysqli_query($conn, $query);
 
 $active_page = 'all_tournaments';
-
-// 3. INCLUDE CENTRALIZED HEADER
-if (file_exists('includes/header.php')) {
-    include 'includes/header.php';
-} else {
-    die("Header file missing in includes/header.php");
-}
+include 'includes/header.php';
 ?>
 
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">

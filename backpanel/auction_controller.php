@@ -13,9 +13,10 @@ if (isset($_GET['tid'])) {
     $active_tournament = mysqli_fetch_assoc($latest)['tournament_id'] ?? 0;
 }
 
-// 2. AUTO-SELECT NEXT PLAYER LOGIC
+// 2. AUTO-SELECT LOGIC
 $current = null;
 if (isset($_GET['msg']) && $_GET['msg'] == 'success') {
+    // Automatically find the next player ID that is NOT in auction_tracking
     $next_q = "SELECT player_id FROM player_master WHERE tournament_id = '$active_tournament' 
                AND player_id NOT IN (SELECT player_id FROM auction_tracking WHERE tournament_id = '$active_tournament')
                ORDER BY player_id ASC LIMIT 1";
@@ -44,7 +45,7 @@ if (isset($_POST['action'])) {
     }
 
     $is_sold = ($action == 'Sold') ? 1 : 0;
-    $is_skip = ($action == 'Skip' || $action == 'Unsold') ? 1 : 0;
+    $is_skip = ($action == 'Unsold') ? 1 : 0;
 
     $sql = "INSERT INTO auction_tracking (player_id, points, tournament_id, sold_team, is_sold, is_skip, auction_tracking_datetime) 
             VALUES ('$p_id', '$points', '$t_id', '$team_id', '$is_sold', '$is_skip', NOW())";
@@ -60,10 +61,10 @@ include 'includes/header.php';
 <div class="max-w-6xl mx-auto p-6">
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h2 class="text-2xl font-black uppercase tracking-tighter">Auction <span class="text-orange-600">Pro-Control</span></h2>
-            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Master Console v3.0</p>
+            <h2 class="text-2xl font-black uppercase tracking-tighter">Auction <span class="text-orange-600">Live-Sync</span></h2>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Auto-Updating Console Active</p>
         </div>
-        <select onchange="location.href='?tid='+this.value" class="bg-slate-100 border-none rounded-xl font-bold text-sm focus:ring-2 focus:ring-orange-500">
+        <select onchange="location.href='?tid='+this.value" class="bg-slate-100 border-none rounded-xl font-bold text-sm focus:ring-2 focus:ring-orange-500 cursor-pointer">
             <?php
             $tourneys = mysqli_query($conn, "SELECT tournament_id, tournament_name FROM tournament_master ORDER BY tournament_id DESC");
             while($t = mysqli_fetch_assoc($tourneys)) {
@@ -77,11 +78,17 @@ include 'includes/header.php';
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-7">
         <div class="lg:col-span-2 bg-white rounded-[2.5rem] shadow-2xl border border-slate-800 p-8">
             <form method="POST" id="auctionForm" class="space-y-6">
-                <input type="hidden" name="tournament_id" value="<?php echo $active_tournament; ?>">
+                <input type="hidden" name="tournament_id" id="tournament_id" value="<?php echo $active_tournament; ?>">
                 
                 <div>
-                    <label class="text-[8px] font-black uppercase text-slate-400 mb-2 block tracking-widest">Target Player</label>
-                    <select name="player_id" id="player_select" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-xl focus:ring-2 focus:ring-orange-500">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-[8px] font-black uppercase text-slate-400 block tracking-widest">Target Player</label>
+                        <!-- NEXT PLAYER BUTTON -->
+                        <button type="button" onclick="nextDropdownPlayer()" class="text-[9px] font-black uppercase bg-orange-100 text-orange-600 px-3 py-1 rounded-lg hover:bg-orange-600 hover:text-white transition-all">
+                            Next Player <i class="fas fa-forward ml-1"></i>
+                        </button>
+                    </div>
+                    <select name="player_id" id="player_select" onchange="autoUpdate()" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-xl focus:ring-2 focus:ring-orange-500">
                         <?php
                         $players = mysqli_query($conn, "SELECT player_id, name FROM player_master WHERE tournament_id = '$active_tournament' ORDER BY name ASC");
                         while($p = mysqli_fetch_assoc($players)) {
@@ -94,9 +101,9 @@ include 'includes/header.php';
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-inner">
-                        <label class="text-[10px] font-bold uppercase text-slate-500 mb-4 block tracking-widest">Bid Amount (₹)</label>
+                        <label class="text-[10px] font-bold uppercase text-slate-500 mb-4 block tracking-widest">Current Bid (₹)</label>
                         <div class="flex items-center gap-2 bg-slate-800/40 rounded-2xl border border-white/5 p-2">
-                            <input type="number" name="points" id="points_input" 
+                            <input type="number" name="points" id="points_input" oninput="autoUpdate()"
                                    value="<?php echo $current['points'] ?? 0; ?>" 
                                    class="bg-transparent border-none text-left pl-4 font-black text-5xl w-full focus:ring-0">
                             
@@ -109,12 +116,12 @@ include 'includes/header.php';
                                 </button>
                             </div>
                         </div>
-                        <div id="inc_tag" class="text-left pl-4 text-[9px] mt-4 font-black text-orange-500 uppercase tracking-widest">Jump: +2,000</div>
+                        <div id="status_indicator" class="text-left pl-4 text-[9px] mt-4 font-black text-slate-500 uppercase tracking-widest">Status: Ready</div>
                     </div>
 
                     <div>
                         <label class="text-[10px] font-black uppercase text-slate-400 mb-2 block tracking-widest">Leading Team</label>
-                        <select name="team_id" class="w-full p-8 bg-slate-50 border-none rounded-3xl font-black text-slate-700 focus:ring-2 focus:ring-orange-500">
+                        <select name="team_id" id="team_select" onchange="autoUpdate()" class="w-full p-8 bg-slate-50 border-none rounded-3xl font-black text-slate-700 focus:ring-2 focus:ring-orange-500">
                             <option value="0">WAITING FOR BIDS</option>
                             <?php
                             $teams = mysqli_query($conn, "SELECT team_id, name FROM team_master WHERE tournament_id = '$active_tournament'");
@@ -127,80 +134,106 @@ include 'includes/header.php';
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-                    <button type="submit" name="action" value="Update" class="p-4 bg-slate-800 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all">Update</button>
-                    <button type="submit" name="action" value="Sold" onclick="return confirm('Confirm Player Sale?')" class="p-4 bg-green-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-green-700 shadow-xl transition-all">Sold</button>
-                    <button type="submit" name="action" value="Unsold" class="p-4 bg-rose-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-rose-700 transition-all">Unsold</button>
-                    <button type="submit" name="action" value="Undo" class="p-4 bg-slate-100 text-slate-400 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-red-50 hover:text-red-500 transition-all">Undo</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
+                    <button type="submit" name="action" value="Sold" onclick="return confirm('Confirm Player Sale?')" class="p-5 bg-green-600 text-white rounded-2xl font-black uppercase text-[12px] tracking-widest hover:bg-green-700 shadow-xl transition-all">Sold</button>
+                    <button type="submit" name="action" value="Unsold" class="p-5 bg-rose-600 text-white rounded-2xl font-black uppercase text-[12px] tracking-widest hover:bg-rose-700 transition-all">Unsold</button>
+                    <button type="submit" name="action" value="Undo" class="p-5 bg-slate-100 text-slate-400 rounded-2xl font-black uppercase text-[12px] tracking-widest hover:bg-red-50 hover:text-red-500 transition-all">Undo</button>
                 </div>
             </form>
         </div>
 
         <div class="space-y-6">
-    <div class="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-200 shadow-sm">
-        <h3 class="text-[10px] font-black uppercase text-slate-400 mb-6 tracking-widest">Recent Activity</h3>
-        
-        <div class="space-y-4">
-            <?php
-            // Fetch only for the active tournament
-            $recent_query = "SELECT p.name, a.points, a.is_sold 
-                             FROM auction_tracking a 
-                             JOIN player_master p ON p.player_id = a.player_id 
-                             WHERE a.tournament_id = '$active_tournament' 
-                             ORDER BY a.auction_tracking_id DESC LIMIT 5";
-            $recent = mysqli_query($conn, $recent_query);
-            
-            while($r = mysqli_fetch_assoc($recent)): 
-            ?>
-                <div class="flex justify-between items-center bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
-                    <span class="font-bold text-xs text-slate-700"><?php echo $r['name']; ?></span>
-                    <span class="font-black <?php echo $r['is_sold'] ? 'text-green-600' : 'text-slate-400'; ?> text-xs italic">
-                        <?php echo $r['is_sold'] ? '₹' . number_format($r['points']) : 'SKIPPED'; ?>
-                    </span>
+            <div class="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-200 shadow-sm">
+                <h3 class="text-[10px] font-black uppercase text-slate-400 mb-6 tracking-widest">Recent Activity</h3>
+                <div class="space-y-4" id="recent_activity_box">
+                    <?php
+                    $recent_query = "SELECT p.name, a.points, a.is_sold FROM auction_tracking a JOIN player_master p ON p.player_id = a.player_id WHERE a.tournament_id = '$active_tournament' ORDER BY a.auction_tracking_id DESC LIMIT 5";
+                    $recent = mysqli_query($conn, $recent_query);
+                    while($r = mysqli_fetch_assoc($recent)): ?>
+                        <div class="flex justify-between items-center bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                            <span class="font-bold text-xs text-slate-700"><?php echo $r['name']; ?></span>
+                            <span class="font-black <?php echo $r['is_sold'] ? 'text-green-600' : 'text-slate-400'; ?> text-xs italic">
+                                <?php echo $r['is_sold'] ? '₹' . number_format($r['points']) : 'SKIPPED'; ?>
+                            </span>
+                        </div>
+                    <?php endwhile; ?>
                 </div>
-            <?php endwhile; ?>
+            </div>
+            <a href="../live_auctions.php" target="_blank" class="group block bg-white p-6 rounded-3xl border border-slate-100 text-center font-black uppercase text-[10px] tracking-widest text-slate-400 hover:text-orange-600 transition-all">
+                Launch Broadcast
+            </a>
         </div>
     </div>
-
-    <a href="../live_auctions.php" target="_blank" class="group block bg-white p-6 rounded-3xl border border-slate-100 text-center font-black uppercase text-[10px] tracking-widest text-slate-400 hover:text-orange-600 hover:border-orange-100 hover:shadow-lg transition-all">
-        <i class="fas fa-external-link-alt mr-2 group-hover:scale-110 transition-transform"></i> 
-        Launch Broadcast
-    </a>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+// --- Next Player in Dropdown ---
+function nextDropdownPlayer() {
+    const select = document.getElementById('player_select');
+    if (select.selectedIndex < select.options.length - 1) {
+        select.selectedIndex = select.selectedIndex + 1;
+        // Reset values for new player
+        document.getElementById('points_input').value = 0;
+        document.getElementById('team_select').value = 0;
+        autoUpdate(); // Sync immediately
+    } else {
+        alert("End of player list reached!");
+    }
+}
+
+// --- AJAX Auto Update Logic ---
+function autoUpdate() {
+    const statusTag = document.getElementById('status_indicator');
+    statusTag.innerText = "Status: Syncing...";
+    statusTag.classList.remove('text-green-500', 'text-slate-500');
+    statusTag.classList.add('text-orange-500');
+
+    const formData = {
+        ajax_update: true,
+        player_id: document.getElementById('player_select').value,
+        points: document.getElementById('points_input').value,
+        team_id: document.getElementById('team_select').value,
+        tournament_id: document.getElementById('tournament_id').value
+    };
+
+    fetch('ajax_update_auction.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            statusTag.innerText = "Status: Live & Saved";
+            statusTag.classList.remove('text-orange-500');
+            statusTag.classList.add('text-green-500');
+        }
+    })
+    .catch(error => {
+        statusTag.innerText = "Status: Sync Error";
+        console.error('Error:', error);
+    });
+}
+
 function adjustBid(dir) {
     const input = document.getElementById('points_input');
-    const tag = document.getElementById('inc_tag');
     let val = parseInt(input.value) || 0;
     
-    // Dynamic Jump Logic
     let step = 2000;
     if (val >= 100000) step = 10000;
     else if (val >= 50000) step = 5000;
 
     input.value = (dir === 'up') ? val + step : Math.max(0, val - step);
-    tag.innerText = `Jump: ${dir === 'up' ? '+' : '-'}${step.toLocaleString()}`;
-    
-    // Subtle flash effect
-    tag.style.opacity = '0.5';
-    setTimeout(() => tag.style.opacity = '1', 150);
+    autoUpdate(); 
 }
 
-// Global Keyboard Listeners
 document.addEventListener('keydown', function(e) {
-    // Only trigger if we aren't typing in an input field
-    if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+    if (document.activeElement.tagName !== 'INPUT') {
         if (e.key === "ArrowUp") { e.preventDefault(); adjustBid('up'); }
         if (e.key === "ArrowDown") { e.preventDefault(); adjustBid('down'); }
+        if (e.key === "n" || e.key === "N") { nextDropdownPlayer(); } // Hotkey for Next Player
     }
 });
-
-window.onload = () => {
-    const pInput = document.getElementById('points_input');
-    pInput.focus();
-    pInput.select();
-}
 </script>
 
 <?php include 'includes/footer.php'; ?>

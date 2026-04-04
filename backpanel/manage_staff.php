@@ -102,12 +102,29 @@ include 'includes/header.php';
                     <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Operations</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+           <tbody class="divide-y divide-slate-50">
                 <?php
                 if($result && mysqli_num_rows($result) > 0) {
                     while($u = mysqli_fetch_assoc($result)) {
+                        $user_id = $u['user_id'];
                         $is_manager = ($u['user_role'] == 'manager');
                         $is_active = ($u['user_status'] == 'Publish');
+
+                        // --- NEW: FETCH ASSIGNED TOURNAMENTS ---
+                        // Joining auction_master with tournament_master to get the names
+                        // Adjust 'user_id' column name if it's different in your auction_master table
+                        $assigned_sql = "SELECT tm.tournament_name 
+                                        FROM auction_master am
+                                        JOIN tournament_master tm ON am.tournament_id = tm.tournament_id 
+                                        WHERE am.user_id = '$user_id' 
+                                        LIMIT 2"; // Limit to 2 for UI cleanliness
+                        $assigned_res = mysqli_query($conn, $assigned_sql);
+                        $tournaments = [];
+                        while($t = mysqli_fetch_assoc($assigned_res)) {
+                            $tournaments[] = $t['tournament_name'];
+                        }
+                        $assigned_count = count($tournaments);
+                        // ---------------------------------------
                 ?>
                 <tr class="hover:bg-blue-50/30 transition-all duration-300 group">
                     <td class="px-10 py-8">
@@ -127,35 +144,54 @@ include 'includes/header.php';
                         </span>
                     </td>
                     <td class="px-10 py-8">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full <?php echo $is_active ? 'bg-green-500 animate-pulse' : 'bg-amber-400'; ?>"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest <?php echo $is_active ? 'text-green-600' : 'text-amber-600'; ?>">
-                                <?php echo $is_active ? 'Active' : 'Pending'; ?>
-                            </span>
+                        <div class="flex flex-col gap-2">
+                            <!-- Status Badge -->
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full <?php echo $is_active ? 'bg-green-500 animate-pulse' : 'bg-amber-400'; ?>"></span>
+                                <span class="text-[10px] font-black uppercase tracking-widest <?php echo $is_active ? 'text-green-600' : 'text-amber-600'; ?>">
+                                    <?php echo $is_active ? 'Active' : 'Pending'; ?>
+                                </span>
+                            </div>
+
+                            <!-- Assigned Tournaments Info -->
+                            <?php if($assigned_count > 0): ?>
+                                <div class="flex flex-wrap gap-1 items-center">
+                                    <span class="text-[8px] font-bold text-slate-300 uppercase">Assigned:</span>
+                                    <?php foreach($tournaments as $name): ?>
+                                        <span class="text-[9px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 truncate max-w-[100px]">
+                                            <?php echo $name; ?>
+                                        </span>
+                                    <?php endforeach; ?>
+                                    <?php if($assigned_count > 2) echo '<span class="text-[8px] font-black text-slate-400">...</span>'; ?>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-[8px] font-bold text-slate-300 uppercase italic">No Active Controls</span>
+                            <?php endif; ?>
+                             <a href="assign_tournament.php?uid=<?php echo $user_id; ?>" 
+                                class="w-6 h-6 flex items-center justify-center rounded-lg bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-slate-200"
+                                title="Assign Tournament">
+                                    <i class="fas fa-plus text-[8px]"></i>
+                                </a>
                         </div>
                     </td>
                     <td class="px-10 py-8">
                         <div class="flex justify-center gap-3">
                             <a href="?action=<?php echo $is_active ? 'suspend' : 'approve'; ?>&id=<?php echo $u['user_id']; ?>" 
-                               class="w-10 h-10 <?php echo $is_active ? 'bg-amber-50 text-amber-500' : 'bg-green-50 text-green-500'; ?> rounded-xl flex items-center justify-center hover:scale-110 transition-all shadow-sm border <?php echo $is_active ? 'border-amber-100' : 'border-green-100'; ?>"
-                               title="<?php echo $is_active ? 'Suspend' : 'Activate'; ?>">
+                            class="w-10 h-10 <?php echo $is_active ? 'bg-amber-50 text-amber-500' : 'bg-green-50 text-green-500'; ?> rounded-xl flex items-center justify-center hover:scale-110 transition-all shadow-sm border <?php echo $is_active ? 'border-amber-100' : 'border-green-100'; ?>"
+                            title="<?php echo $is_active ? 'Suspend' : 'Activate'; ?>">
                                 <i class="fas <?php echo $is_active ? 'fa-pause' : 'fa-check'; ?> text-xs"></i>
                             </a>
                             
                             <a href="?action=delete&id=<?php echo $u['user_id']; ?>" 
-                               onclick="return confirm('CRITICAL: Remove this staff member permanently?')" 
-                               class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100">
+                            onclick="return confirm('CRITICAL: Remove this staff member permanently?')" 
+                            class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100">
                                 <i class="fas fa-trash-alt text-xs"></i>
                             </a>
                         </div>
                     </td>
                 </tr>
                 <?php } } else { ?>
-                <tr>
-                    <td colspan="4" class="p-20 text-center">
-                        <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">No staff members found in registry</p>
-                    </td>
-                </tr>
+                    <!-- Empty Registry State -->
                 <?php } ?>
             </tbody>
         </table>

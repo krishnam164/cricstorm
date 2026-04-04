@@ -72,7 +72,7 @@ include 'includes/header.php';
             <h3 class="text-lg font-black text-slate-900 uppercase italic tracking-tighter">Recent Auction Streams</h3>
             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Real-time monitoring of auction_master</p>
         </div>
-        <a href="manage_tournaments.php" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-500 transition-all shadow-lg shadow-slate-200">View All Tournaments</a>
+        <a href="all_tournaments.php" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-500 transition-all shadow-lg shadow-slate-200">View All Tournaments</a>
     </div>
     
     <div class="overflow-x-auto">
@@ -113,7 +113,7 @@ include 'includes/header.php';
                         </span>
                     </td>
                     <td class="px-8 py-6 text-center">
-                        <a href="manage_auction.php?id=<?php echo $current_auc_id; ?>" class="inline-flex w-8 h-8 bg-teal-50 text-teal-600 rounded-lg items-center justify-center hover:bg-teal-600 hover:text-white transition-all shadow-sm">
+                        <a href="auction_controller.php?id=<?php echo $current_auc_id; ?>" class="inline-flex w-8 h-8 bg-teal-50 text-teal-600 rounded-lg items-center justify-center hover:bg-teal-600 hover:text-white transition-all shadow-sm">
                             <i class="fas fa-external-link-alt text-[10px]"></i>
                         </a>
                     </td>
