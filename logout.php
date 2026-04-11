@@ -1,8 +1,5 @@
 <?php
-/**
- * CRICSTROME SESSION TERMINATION
- * Safely destroys all user sessions and redirects to login.
- */
+
 
 include 'config.php';
 

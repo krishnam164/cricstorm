@@ -12,7 +12,7 @@
             </div>
 
             <div class="mt-10 md:mt-0 text-[10px] font-bold text-silver uppercase tracking-[0.5em]">
-                &copy; 2026 CRICSTROME SYSTEM
+                &copy; 2026 CRICSTROM SYSTEM
             </div>
         </div>
     </footer>

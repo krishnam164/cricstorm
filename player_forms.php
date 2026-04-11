@@ -18,10 +18,6 @@ if (isset($_POST['register_player'])) {
     $tshirt = $_POST['tshirt_size'];
     $trouser = $_POST['trouser_size'];
 
-    $form_query = mysqli_query($conn, "SELECT MAX(form_no) as last_no FROM player_master WHERE tournament_id = '$t_id'");
-    $form_data = mysqli_fetch_assoc($form_query);
-    $next_form_no = ($form_data['last_no']) ? $form_data['last_no'] + 1 : 1;
-    
     // Get Tournament Name for Folder Path
     $t_res = mysqli_query($conn, "SELECT tournament_name FROM tournament_master WHERE tournament_id = '$t_id'");
     $t_info = mysqli_fetch_assoc($t_res);
@@ -30,7 +26,7 @@ if (isset($_POST['register_player'])) {
 
     if (!file_exists($target_dir)) { mkdir($target_dir, 0777, true); }
 
-    // 2. FILE HANDLING
+    // FILE HANDLING
     $player_slug = strtolower(str_replace(' ', '_', $name));
     $photo_path = $target_dir . $player_slug . "_photo.png";
     $adhar_f_path = $target_dir . $player_slug . "_adhar_front.png";
@@ -40,7 +36,6 @@ if (isset($_POST['register_player'])) {
     move_uploaded_file($_FILES["adhar_front"]["tmp_name"], $adhar_f_path);
     move_uploaded_file($_FILES["adhar_back"]["tmp_name"], $adhar_b_path);
 
-    // 3. INSERT (All columns from your DB)
     $sql = "INSERT INTO player_master (
                 tournament_id, name, address, mobile_no, birth_date, 
                 category, batsman_type, bowler_type, size,
@@ -63,19 +58,28 @@ if (isset($_POST['register_player'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CricStrome | Player Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CricStorm | Player Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Prevents horizontal scrolling on small devices */
+        body { overflow-x: hidden; }
+        /* Custom styling for date inputs to look consistent across browsers */
+        input[type="date"] { min-height: 3.5rem; }
+    </style>
 </head>
-<body class="bg-slate-50 py-12 px-4">
+<body class="bg-slate-50 py-6 md:py-12 px-4">
 
-<div class="max-w-4xl mx-auto bg-white rounded-[3rem] shadow-xl border border-teal-50 overflow-hidden">
-    <div class="bg-slate-900 p-10 text-center">
-        <h2 class="text-3xl font-black text-white italic tracking-widest">PLAYER <span class="text-teal-400">REGISTRATION</span></h2>
-        <p class="text-slate-400 text-[10px] uppercase font-bold tracking-[0.3em] mt-2">Personalize your CricStrome profile</p>
+<div class="max-w-4xl mx-auto bg-white rounded-[2rem] md:rounded-[3rem] shadow-xl border border-teal-50 overflow-hidden">
+    <div class="bg-slate-900 p-6 md:p-10 text-center">
+        <h2 class="text-2xl md:text-3xl font-black text-white italic tracking-widest uppercase">
+            Player <span class="text-teal-400">Registration</span>
+        </h2>
+        <p class="text-slate-400 text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] mt-2">Personalize your CricStorm profile</p>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" class="p-8 md:p-12 space-y-8">
+    <form method="POST" enctype="multipart/form-data" class="p-6 md:p-12 space-y-6 md:space-y-8">
         
         <?php if($message): ?>
             <div class="p-4 bg-teal-50 text-teal-600 rounded-2xl text-[10px] font-black uppercase text-center border border-teal-100 italic">
@@ -83,11 +87,11 @@ if (isset($_POST['register_player'])) {
             </div>
         <?php endif; ?>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             
             <div class="md:col-span-2">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Available Tournaments</label>
-                <select name="tournament_id" required class="w-full px-8 py-5 bg-slate-50 rounded-[2rem] border-none font-bold text-slate-700 focus:ring-2 focus:ring-teal-500 transition-all outline-none">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Available Tournaments</label>
+                <select name="tournament_id" required class="w-full px-6 md:px-8 py-4 md:py-5 bg-slate-50 rounded-xl md:rounded-[2rem] border-none font-bold text-slate-700 focus:ring-2 focus:ring-teal-500 transition-all outline-none text-sm md:text-base">
                     <option value="">-- Choose a Tournament --</option>
                     <?php while($t = mysqli_fetch_assoc($tournaments_query)): ?>
                         <option value="<?php echo $t['tournament_id']; ?>"><?php echo $t['tournament_name']; ?></option>
@@ -95,38 +99,40 @@ if (isset($_POST['register_player'])) {
                 </select>
             </div>
 
-            <div class="md:col-span-2 flex flex-col items-center justify-center pb-4">
-                <div class="relative w-32 h-32 group">
+            <div class="md:col-span-2 flex flex-col items-center justify-center pb-2">
+                <div class="relative w-28 h-28 md:w-32 md:h-32 group">
                     <input type="file" name="photo" id="photo-input" accept="image/*" required class="hidden" onchange="previewImage(this)">
                     <label for="photo-input" class="cursor-pointer block w-full h-full rounded-full border-4 border-dashed border-slate-200 bg-slate-50 overflow-hidden hover:border-teal-400 transition-all relative">
                         <img id="photo-preview" class="w-full h-full object-cover hidden">
                         <div id="photo-placeholder" class="flex flex-col items-center justify-center h-full text-slate-300">
-                            <i class="fas fa-camera text-2xl"></i>
+                            <i class="fas fa-camera text-xl md:text-2xl"></i>
                             <span class="text-[8px] font-black uppercase mt-1">Photo</span>
                         </div>
                     </label>
-                    <div class="absolute -bottom-2 -right-2 bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                    <div class="absolute -bottom-1 -right-1 bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
                         <i class="fas fa-plus text-[10px]"></i>
                     </div>
                 </div>
             </div>
 
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Full Name</label>
-                <input type="text" name="name" required class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none focus:bg-white border border-transparent focus:border-teal-500">
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Full Name</label>
+                <input type="text" name="name" required placeholder="Your Name" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none focus:bg-white border border-transparent focus:border-teal-500 text-sm">
             </div>
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Date of Birth</label>
-                <input type="date" name="birth_date" required class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none focus:bg-white border border-transparent focus:border-teal-500">
+            
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Date of Birth</label>
+                <input type="date" name="birth_date" required class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none focus:bg-white border border-transparent focus:border-teal-500 text-sm">
             </div>
 
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Mobile Number</label>
-                <input type="text" name="mobile_no" required class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Mobile Number</label>
+                <input type="tel" name="mobile_no" required placeholder="00000 00000" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
             </div>
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Player Category</label>
-                <select name="category" class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Player Category</label>
+                <select name="category" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
                     <option value="All Rounder">All Rounder</option>
                     <option value="Batsman">Batsman</option>
                     <option value="Bowler">Bowler</option>
@@ -134,16 +140,17 @@ if (isset($_POST['register_player'])) {
                 </select>
             </div>
 
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Batting Style</label>
-                <select name="batsman_type" class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Batting Style</label>
+                <select name="batsman_type" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
                     <option value="Right Handed">Right Handed</option>
                     <option value="Left Handed">Left Handed</option>
                 </select>
             </div>
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Bowling Style</label>
-                <select name="bowler_type" class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Bowling Style</label>
+                <select name="bowler_type" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
                     <option value="Right Arm Fast">Right Arm Fast</option>
                     <option value="Right Arm Spin">Right Arm Spin</option>
                     <option value="Left Arm Fast">Left Arm Fast</option>
@@ -152,9 +159,9 @@ if (isset($_POST['register_player'])) {
                 </select>
             </div>
 
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">T-Shirt Size</label>
-                <select name="tshirt_size" class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">T-Shirt Size</label>
+                <select name="tshirt_size" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
                     <option value="S">Small (S)</option>
                     <option value="M">Medium (M)</option>
                     <option value="L">Large (L)</option>
@@ -162,35 +169,37 @@ if (isset($_POST['register_player'])) {
                     <option value="XXL">Double XL (XXL)</option>
                 </select>
             </div>
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Trouser Size</label>
-                <input type="number" name="trouser_size" placeholder="e.g. 32" class="w-full px-8 py-4 bg-slate-50 rounded-2xl font-bold text-slate-700 outline-none">
+
+            <div class="space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Trouser Size</label>
+                <input type="number" name="trouser_size" placeholder="e.g. 32" class="w-full px-6 md:px-8 py-3.5 md:py-4 bg-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none text-sm">
             </div>
 
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Aadhar Front</label>
-                    <input type="file" name="adhar_front" required class="w-full px-6 py-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-[10px] font-bold text-slate-400">
+                <div class="space-y-1">
+                    <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Proof Front</label>
+                    <input type="file" name="adhar_front" required class="w-full px-6 py-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl md:rounded-2xl text-[10px] font-bold text-slate-400">
                 </div>
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Aadhar Back</label>
-                    <input type="file" name="adhar_back" required class="w-full px-6 py-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-[10px] font-bold text-slate-400">
+                <div class="space-y-1">
+                    <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Proof Back</label>
+                    <input type="file" name="adhar_back" required class="w-full px-6 py-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl md:rounded-2xl text-[10px] font-bold text-slate-400">
                 </div>
             </div>
 
-            <div class="md:col-span-2">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Full Permanent Address</label>
-                <textarea name="address" required class="w-full px-8 py-6 bg-slate-50 rounded-[2rem] font-bold text-slate-700 h-32 outline-none focus:bg-white border border-transparent focus:border-teal-500"></textarea>
+            <div class="md:col-span-2 space-y-1">
+                <label class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 mb-2 block">Full Permanent Address</label>
+                <textarea name="address" required placeholder="Enter your full address..." class="w-full px-6 md:px-8 py-4 md:py-6 bg-slate-50 rounded-xl md:rounded-[2rem] font-bold text-slate-700 h-32 outline-none focus:bg-white border border-transparent focus:border-teal-500 text-sm"></textarea>
             </div>
         </div>
 
-        <button type="submit" name="register_player" class="w-full bg-slate-900 text-white py-6 rounded-[2rem] text-[12px] font-black uppercase tracking-[0.3em] hover:bg-teal-500 transition-all shadow-xl shadow-slate-200">
+        <button type="submit" name="register_player" class="w-full bg-slate-900 text-white py-5 md:py-6 rounded-xl md:rounded-[2rem] text-xs md:text-[12px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] hover:bg-teal-500 transition-all shadow-xl shadow-slate-200 active:scale-95">
             Submit Registration
         </button>
     </form>
 </div>
 
 <script>
+// Image preview for profile photo
 function previewImage(input) {
     const preview = document.getElementById('photo-preview');
     const placeholder = document.getElementById('photo-placeholder');

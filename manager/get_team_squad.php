@@ -15,7 +15,7 @@ $query = "SELECT p.name, p.photo, a.points, p.batsman_type, p.category
 $res = mysqli_query($conn, $query);
 
 if(mysqli_num_rows($res) > 0) {
-    // grid-cols-1 for vertical mobile list
+    // flex-col for a vertical list that fits mobile viewports perfectly
     echo '<div class="flex flex-col gap-2">';
     while($row = mysqli_fetch_assoc($res)) {
         

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 29, 2026 at 12:19 PM
+-- Generation Time: Apr 10, 2026 at 10:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -1005,7 +1005,8 @@ INSERT INTO `auction_master` (`auction_id`, `user_id`, `tournament_id`, `player_
 (1095, 11, 15, 1858, 73, 100000, 'Sold', '2025-12-28 23:13:53'),
 (1096, 11, 15, 1853, 73, 800000, 'Sold', '2025-12-28 23:14:37'),
 (1097, 11, 15, 1957, 75, 100000, 'Sold', '2025-12-28 23:15:09'),
-(1098, 11, 15, 1893, 75, 300000, 'Sold', '2025-12-29 12:50:30');
+(1098, 11, 15, 1893, 75, 300000, 'Sold', '2025-12-29 12:50:30'),
+(1099, 13, 16, 0, 0, 0, 'Unsold', '2026-04-04 13:14:01');
 
 -- --------------------------------------------------------
 
@@ -19934,7 +19935,17 @@ INSERT INTO `auction_tracking` (`auction_tracking_id`, `player_id`, `points`, `i
 (24621, 1976, 16000, 0, 0, 84, 16, 0, '2026-03-29 15:12:32'),
 (24622, 1976, 26000, 0, 0, 85, 16, 0, '2026-03-29 15:12:38'),
 (24625, 1976, 34000, 0, 0, 85, 16, 0, '2026-03-29 15:15:33'),
-(24626, 1976, 34000, 0, 0, 83, 16, 0, '2026-03-29 15:33:33');
+(24626, 1976, 34000, 0, 0, 83, 16, 0, '2026-03-29 15:33:33'),
+(24627, 1976, 34000, 0, 1, 83, 16, 0, '2026-03-31 08:47:57'),
+(24628, 1975, 34000, 0, 0, 83, 16, 0, '2026-04-04 11:14:58'),
+(24629, 1976, 34000, 0, 0, 83, 16, 0, '2026-04-04 11:21:31'),
+(24630, 1976, 36000, 0, 0, 83, 16, 0, '2026-04-04 11:21:45'),
+(24631, 1976, 65000, 0, 0, 83, 16, 0, '2026-04-04 11:22:18'),
+(24632, 1976, 65000, 0, 1, 83, 16, 0, '2026-04-04 11:22:27'),
+(24633, 1977, 8000, 0, 0, 83, 16, 0, '2026-04-04 11:22:56'),
+(24634, 1976, 4000, 0, 1, 0, 16, 0, '2026-04-04 12:35:01'),
+(24635, 1975, 8000, 0, 1, 0, 16, 0, '2026-04-10 12:42:05'),
+(24636, 1976, 6000, 1, 0, 83, 16, 0, '2026-04-10 12:47:13');
 
 -- --------------------------------------------------------
 
@@ -21420,10 +21431,9 @@ INSERT INTO `player_master` (`player_id`, `tournament_id`, `form_no`, `name`, `a
 (1970, 15, 100, 'Saumil savani ', 'Vikaliya ', '9106866003', '2004-06-09', 21, NULL, 'Bowler', '', NULL, 'Publish', 'saumil-savani-15-100-25122025-195656.jpg', 'saumil-savani-15-100-25122025-1956561.jpg', 'saumil-savani-15-100-25122025-1956562.jpg', NULL, NULL, NULL, '2025-12-25 19:56:56'),
 (1971, 15, 101, 'Dhruvin shingala', 'Vikaliya ', '8401925801', '2005-04-01', 20, NULL, 'All Rounder', '', NULL, 'Publish', 'dhruvin-shingala-15-101-25122025-200625.jpg', 'dhruvin-shingala-15-101-25122025-2006251.jpg', 'dhruvin-shingala-15-101-25122025-2006252.jpg', NULL, NULL, NULL, '2025-12-25 20:06:25'),
 (1972, 15, 102, 'Paras italiya', 'Hadhapur ', '9033343395', '1993-12-09', 32, NULL, 'All Rounder', '', NULL, 'Publish', 'paras-italiya-15-102-25122025-232909.jpeg', 'paras-italiya-15-102-25122025-2329091.jpeg', 'paras-italiya-15-102-25122025-2329092.jpeg', NULL, NULL, NULL, '2025-12-25 23:29:09'),
-(1973, 15, 50, 'Mishra Krishna ', 'Bardoli', '9737631021', '0000-00-00', 20, 'M', 'All rounder', 'right hand', NULL, 'Publish', 'images/Krishna1(1).jpg', NULL, NULL, NULL, NULL, NULL, '2026-03-15 11:30:32'),
-(1974, 15, 50, 'Mishra Krishna ', 'Bardoli', '9737631021', '0000-00-00', 20, 'M', 'All rounder', 'right hand', NULL, 'Publish', 'krishna.png', NULL, NULL, NULL, NULL, NULL, '2026-03-15 11:30:46'),
 (1975, 16, 0, 'Krishna Shaileshbhai Mishra', 'Jay Nagar\r\nHouse', '0973763102', '2006-04-16', NULL, 'M', 'All Rounder', 'Right Handed', 'Right Arm Fast', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/Krishna.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/krishna_shaileshbhai_mishra_adhar_back.png', NULL, NULL, NULL, '2026-03-21 13:26:57'),
-(1976, 16, 0, 'Dhruv Sen', 'Bardoli', '970954432', '2009-12-28', NULL, 'S', 'Batsman', 'Right Handed', 'None', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/dhruv.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_back.png', NULL, NULL, NULL, '2026-03-29 11:13:25');
+(1976, 16, 0, 'Dhruv Sen', 'Bardoli', '970954432', '2009-12-28', NULL, 'S', 'Batsman', 'Right Handed', 'None', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/dhruv.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/dhruv_sen_adhar_back.png', NULL, NULL, NULL, '2026-03-29 11:13:25'),
+(1977, 16, 0, 'abhishek', 'Jay Nagar\r\nHouse', '9595235352', '2002-12-16', NULL, 'XXL', 'Wicket Keeper', 'Right Handed', 'None', 'Pending', 'uploads/tournaments/Jaynagar_Premier_League/abhishek_photo.png', 'uploads/tournaments/Jaynagar_Premier_League/abhishek_adhar_front.png', 'uploads/tournaments/Jaynagar_Premier_League/abhishek_adhar_back.png', NULL, NULL, NULL, '2026-04-10 13:01:45');
 
 -- --------------------------------------------------------
 
@@ -21639,8 +21649,9 @@ INSERT INTO `users` (`user_id`, `user_pass`, `user_email`, `user_mobile`, `user_
 (8, '07fc2383d3bcee5a8f4fb275e8ee856a', 'darshanmoradiya0000@gmail.com', '9979077987', 'Surat', '2025-12-29 05:59:31', 'Draft', 'Darshan Moradiya', 'manager', 15, 'None', NULL),
 (9, 'f4bf5c63e0cbfd74d9378869e4763776', 'rpl@gmail.com', '9909146046', 'Surat', '2025-11-12 04:41:47', 'Draft', 'Amitbhai', 'organizer', 13, 'None', NULL),
 (10, '44a4f237cf6c04508226c656a204b19a', 'fpl@gmail.com', '9100378383', 'Surat', '2025-11-12 04:41:54', 'Draft', 'Ghanshyambhai', 'organizer', 11, 'None', NULL),
-(11, 'e371895df9312f25484bdaa37859f6e9', 'krishna16@gmail.com', '9979760579', 'jay Nagar, Gandhi Road, Bardoli', '2026-03-16 07:04:32', 'Publish', 'Mishra Krishna', 'organizer', 4, 'Accepted', '2026-03-10 09:28:00'),
-(12, '243bd1ce0387f18005abfc43b001646a', 'km942169@gmail.com', '9737631021', 'jay Nagar, Gandhi road, Bardoli', '2026-03-10 03:25:23', 'Publish', 'Mishra Krishna Shaileshbhai', 'administrator', 0, 'None', NULL);
+(11, 'e371895df9312f25484bdaa37859f6e9', 'krishna16@gmail.com', '9979760579', 'jay Nagar, Gandhi Road, Bardoli', '2026-04-04 07:48:36', 'Publish', 'Mishra Krishna', 'organizer', 4, 'Accepted', '2026-03-10 09:28:00'),
+(12, '243bd1ce0387f18005abfc43b001646a', 'km942169@gmail.com', '9737631021', 'jay Nagar, Gandhi road, Bardoli', '2026-04-04 07:01:35', 'Publish', 'Mishra Krishna Shaileshbhai', 'administrator', 0, 'None', NULL),
+(13, 'e10adc3949ba59abbe56e057f20f883e', 'ab12@gamil.com', '9595235352', NULL, '2026-04-10 07:10:31', 'Publish', 'Abhishek Shah', 'organizer', 0, 'Accepted', NULL);
 
 -- --------------------------------------------------------
 
@@ -21764,7 +21775,7 @@ ALTER TABLE `user_meta`
 -- AUTO_INCREMENT for table `auction_master`
 --
 ALTER TABLE `auction_master`
-  MODIFY `auction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1099;
+  MODIFY `auction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1100;
 
 --
 -- AUTO_INCREMENT for table `auction_player_master`
@@ -21776,7 +21787,7 @@ ALTER TABLE `auction_player_master`
 -- AUTO_INCREMENT for table `auction_tracking`
 --
 ALTER TABLE `auction_tracking`
-  MODIFY `auction_tracking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24627;
+  MODIFY `auction_tracking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24639;
 
 --
 -- AUTO_INCREMENT for table `field_type_master`
@@ -21794,7 +21805,7 @@ ALTER TABLE `player_form_fields`
 -- AUTO_INCREMENT for table `player_master`
 --
 ALTER TABLE `player_master`
-  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1977;
+  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1978;
 
 --
 -- AUTO_INCREMENT for table `settings_master`
@@ -21818,7 +21829,7 @@ ALTER TABLE `tournament_master`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `user_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `user_master`

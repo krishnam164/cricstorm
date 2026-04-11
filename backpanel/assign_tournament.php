@@ -6,11 +6,9 @@ if (!isset($_SESSION['admin_id']) || $_SESSION['admin_id'] == '') {
     header("Location: ../login.php"); exit();
 }
 
-// Get the User ID from the URL (?uid=12)
 $target_user_id = isset($_GET['uid']) ? intval($_GET['uid']) : 0;
 
-// --- FIX: Fetch User Data immediately ---
-$user_data = ['user_fullname' => 'Unknown Staff']; // Default value to prevent "Undefined" error
+$user_data = ['user_fullname' => 'Unknown Staff'];
 if ($target_user_id > 0) {
     $user_res = mysqli_query($conn, "SELECT user_fullname FROM users WHERE user_id = '$target_user_id'");
     if ($user_res && mysqli_num_rows($user_res) > 0) {
@@ -18,9 +16,9 @@ if ($target_user_id > 0) {
     }
 }
 
-// 2. HANDLE ASSIGNMENT ACTION (POST)
+// 2. HANDLE ASSIGNMENT ACTION
 if (isset($_POST['assign_now'])) {
-    $raw_id = $_POST['auction_id'];
+    $raw_id = mysqli_real_escape_string($conn, $_POST['auction_id']);
     
     if (strpos($raw_id, 'NEW_') !== false) {
         $t_id = str_replace('NEW_', '', $raw_id);
@@ -35,30 +33,28 @@ if (isset($_POST['assign_now'])) {
 
 include 'includes/header.php';
 ?>
-<div class="max-w-2xl mx-auto p-6">
-    <div class="bg-white rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden">
-        <div class="p-10 bg-slate-900 text-white relative">
-            <h2 class="text-3xl font-black italic uppercase leading-none">Assign <span class="text-blue-500">Control</span></h2>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">Staff: <?php echo $user_data['user_fullname']; ?></p>
-            <i class="fas fa-link absolute top-10 right-10 text-4xl text-white/10"></i>
+
+<div class="max-w-2xl mx-auto p-4 md:p-6 pb-12">
+    <div class="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden">
+        
+        <div class="p-8 md:p-10 bg-slate-900 text-white relative">
+            <h2 class="text-2xl md:text-3xl font-black italic uppercase leading-none tracking-tighter">
+                Assign <span class="text-blue-500">Control</span>
+            </h2>
+            <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-3">
+                Staff: <span class="text-white"><?php echo $user_data['user_fullname']; ?></span>
+            </p>
+            <i class="fas fa-link absolute top-8 right-8 md:top-10 md:right-10 text-3xl md:text-4xl text-white/10"></i>
         </div>
 
-        <form method="POST" class="p-10 space-y-8">
+        <form method="POST" class="p-6 md:p-10 space-y-6 md:space-y-8">
             <div>
-                <label class="text-[10px] font-black uppercase text-slate-400 mb-4 block tracking-widest">Select Available Tournament</label>
-                    <select name="auction_id" required class="w-full p-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
+                <label class="text-[9px] md:text-[10px] font-black uppercase text-slate-400 mb-4 block tracking-widest ml-2">
+                    Select Available Tournament
+                </label>
+                <select name="auction_id" required class="w-full p-4 md:p-5 bg-slate-50 border-none rounded-xl md:rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer text-sm">
                     <option value="">-- Choose a League --</option>
                     <?php
-                    // 1. Ensure the connection is global and available
-                    global $conn; 
-
-                    // 2. Double check if $conn is still null (Emergency check)
-                    if (!$conn) {
-                        // If config.php didn't work, try including it again with a hard path
-                        include_once('../config.php'); 
-                    }
-
-                    // 3. The Optimized SQL (Tournament Master Focus)
                     $sql = "SELECT 
                                 tm.tournament_id, 
                                 tm.tournament_name, 
@@ -74,7 +70,6 @@ include 'includes/header.php';
                     
                     if($res && mysqli_num_rows($res) > 0) {
                         while($row = mysqli_fetch_assoc($res)) {
-                            // Status Logic
                             if (!empty($row['user_fullname'])) {
                                 $status = " (Managed by: " . $row['user_fullname'] . ")";
                             } elseif (!empty($row['latest_auc_id'])) {
@@ -83,23 +78,21 @@ include 'includes/header.php';
                                 $status = " (Ready for Setup)";
                             }
 
-                            // Value Logic: Use Auction ID if exists, else Tournament ID
                             $val = $row['latest_auc_id'] ?: "NEW_" . $row['tournament_id'];
-                            
                             echo "<option value='".$val."'>" . $row['tournament_name'] . $status . "</option>";
                         }
                     } else {
-                        echo "<option value='' disabled>No tournaments found or DB Error</option>";
+                        echo "<option value='' disabled>No tournaments found</option>";
                     }
                     ?>
                 </select>
             </div>
 
-            <div class="flex gap-4">
-                <button type="submit" name="assign_now" class="flex-grow bg-blue-600 text-white py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-900 transition-all shadow-xl">
+            <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
+                <button type="submit" name="assign_now" class="order-1 sm:order-none flex-grow bg-blue-600 text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-900 transition-all shadow-xl active:scale-95">
                     Confirm Assignment
                 </button>
-                <a href="manage_staff.php" class="px-8 bg-slate-100 text-slate-400 flex items-center justify-center rounded-2xl hover:bg-slate-200 transition-all">
+                <a href="manage_staff.php" class="order-2 sm:order-none px-6 py-4 md:px-8 bg-slate-100 text-slate-400 flex items-center justify-center rounded-xl md:rounded-2xl hover:bg-slate-200 transition-all">
                     <i class="fas fa-arrow-left"></i>
                 </a>
             </div>

@@ -1,49 +1,55 @@
 <?php
 include 'config.php';
 
-// 1. FETCH LATEST AUCTION DATA
+// 1. FETCH LIVE SYNC DATA (Handles real-time bid/player)
+$sync_res = mysqli_query($conn, "SELECT * FROM auction_live_sync WHERE sync_id = 1");
+$sync = mysqli_fetch_assoc($sync_res);
+
+// 2. FETCH LATEST TRACKING STATUS (Check the VERY LAST official action)
+$track_res = mysqli_query($conn, "SELECT player_id, is_sold, is_skip FROM auction_tracking ORDER BY auction_tracking_id DESC LIMIT 1");
+$track = mysqli_fetch_assoc($track_res);
+
+// 3. FETCH FULL PLAYER & TEAM DETAILS BASED ON SYNC TABLE
+$active_p = $sync['player_id'];
+$active_t = $sync['team_id'];
+$current_tournament_id = $sync['tournament_id'];
+
 $query = "
     SELECT 
-        a.auction_tracking_id, a.player_id, a.points, a.is_sold, a.is_skip, a.sold_team, a.tournament_id,
-        p.name, p.photo, p.batsman_type,p.category, p.address, p.player_id AS player_no,
+        p.name, p.photo, p.batsman_type, p.category, p.address, p.player_id AS player_no,
         t.name AS team_name, t.team_logo AS team_logo,
         tm.tournament_name
-    FROM auction_tracking a
-    LEFT JOIN player_master p ON p.player_id = a.player_id
-    LEFT JOIN team_master t ON t.team_id = a.sold_team
-    LEFT JOIN tournament_master tm ON tm.tournament_id = a.tournament_id
-    ORDER BY a.auction_tracking_id DESC
-    LIMIT 1
+    FROM player_master p
+    LEFT JOIN team_master t ON t.team_id = '$active_t'
+    LEFT JOIN tournament_master tm ON tm.tournament_id = p.tournament_id
+    WHERE p.player_id = '$active_p'
 ";
 
 $res = mysqli_query($conn, $query);
 $data = mysqli_fetch_assoc($res);
 
-$tournament_folder = !empty($data['tournament_name']) ? $data['tournament_name'] : 'default';
+// 4. CRITICAL FIX: Only show Sold/Skip if IDs match
+$data['points'] = $sync['current_bid'];
 
-$photo_path = ($data['photo'] ?? 'default.png');
-
-if (!empty($data['photo']) && file_exists($photo_path)) {
-    $player_photo = $photo_path;
+// Logic: Only set is_sold to 1 if the player in the tracking table is the SAME as the active player
+if ($track['player_id'] == $active_p) {
+    $data['is_sold'] = $track['is_sold'];
+    $data['is_skip'] = $track['is_skip'];
 } else {
-    $player_photo = 'uploads/tournaments/default.png'; 
+    // If we are bidding on a new player, force the popups to stay hidden
+    $data['is_sold'] = 0;
+    $data['is_skip'] = 0;
 }
 
-$current_tournament_id = $data['tournament_id'] ?? 0;
-
-// 2. LIVE STATS
-// Count sold players for THIS tournament
+// 5. LIVE STATS & TICKER
 $sold_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM auction_tracking WHERE is_sold = 1 AND tournament_id = '$current_tournament_id'");
 $sold_count = mysqli_fetch_assoc($sold_res)['total'] ?? 0;
 
-// NEW: Count total players assigned ONLY to THIS tournament
 $total_res = mysqli_query($conn, "SELECT COUNT(*) as total FROM player_master WHERE tournament_id = '$current_tournament_id'");
 $total_players = mysqli_fetch_assoc($total_res)['total'] ?? 0;
 
-// 3. TEAMS LIST
 $teams_res = mysqli_query($conn, "SELECT name, team_logo FROM team_master WHERE tournament_id = '$current_tournament_id' ORDER BY team_id ASC");
 
-// 4. TICKER DATA - Fetching only the last 6 SOLD players
 $ticker_query = "
     SELECT p.name, a.points 
     FROM auction_tracking a 
@@ -54,6 +60,10 @@ $ticker_query = "
     LIMIT 6
 ";
 $ticker_res = mysqli_query($conn, $ticker_query);
+
+// Handle Photo Path
+$photo_path = ($data['photo'] ?? 'default.png');
+$player_photo = (!empty($data['photo']) && file_exists($photo_path)) ? $photo_path : 'uploads/tournaments/default.png';
 ?>
 
 <!DOCTYPE html>
